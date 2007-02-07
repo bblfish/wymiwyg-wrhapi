@@ -1,0 +1,3 @@
+- Model request body consistently with response. 
+- Use typed collections instead of array where the order is irrelevant.
+
