@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import java.nio.channels.Pipe;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.Pipe.SinkChannel;
 
 
 /**
@@ -37,7 +38,9 @@ public abstract class MessageBody2Write implements MessageBody {
         new Thread() {
                 public void run() {
                     try {
-                        writeTo(pipe.sink());
+                    	SinkChannel sinkChannel = pipe.sink();
+                        writeTo(sinkChannel);
+                        sinkChannel.close();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
