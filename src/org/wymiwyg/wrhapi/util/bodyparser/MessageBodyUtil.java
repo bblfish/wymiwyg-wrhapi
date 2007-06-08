@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.wymiwyg.wrhapi.util;
+package org.wymiwyg.wrhapi.util.bodyparser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,36 +24,20 @@ import java.nio.channels.Channels;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import javax.activation.MimeTypeParseException;
+
+
+import org.wymiwyg.commons.mediatypes.MimeType;
+import org.wymiwyg.wrhapi.HandlerException;
+import org.wymiwyg.wrhapi.HeaderName;
 import org.wymiwyg.wrhapi.MessageBody;
+import org.wymiwyg.wrhapi.Request;
 
 /**
  * @author reto
  *
  */
 public class MessageBodyUtil {
-	/**
-	 * @author reto
-	 *
-	 */
-	public static class KeyValuePair {
-		String key, value;
-
-		private KeyValuePair(String key, String value) {
-			super();
-			this.key = key;
-			this.value = value;
-		}
-
-		public String getKey() {
-			return key;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-	}
-
 	/** decodes a form encoded following application/x-www-form-urlencoded as defined in 17.13.4 of HTML 4.01 
 	 * 
 	 * @param messageBody
@@ -93,5 +77,13 @@ public class MessageBodyUtil {
 		};
 		
 	}
-
+	
+	public static MultiPartBody parseMultipart(Request request) throws HandlerException {
+		try {
+			return new MultiPartBodyImpl(request, new MimeType(request.getHeaderValues(HeaderName.CONTENT_TYPE)[0]));
+		} catch (MimeTypeParseException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
 }
