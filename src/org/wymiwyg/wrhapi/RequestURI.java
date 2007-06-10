@@ -21,8 +21,14 @@ package org.wymiwyg.wrhapi;
  * @author reto
  */
 public interface RequestURI {
+    /**
+     * @return the path without parameters.
+     */
     public String getPath();
 
+    /**
+     * @return the parameter names in the order they first appear in the request
+     */
     public String[] getParameterNames();
 
     /**

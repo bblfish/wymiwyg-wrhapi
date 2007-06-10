@@ -16,56 +16,66 @@
  */
 package org.wymiwyg.wrhapi;
 
-
 /**
+ * A HandlerException allows HandlerS to throw an exception with a
+ * ResponseStatus that will be the status of the HTTP-Response describing the
+ * error.
+ * 
  * @author reto
  */
 public class HandlerException extends Exception {
-    /**
-    *
-    */
-    private static final long serialVersionUID = 3257846580244789048L;
-    private ResponseStatus status;
+	
+	
+	private static final long serialVersionUID = 3257846580244789048L;
 
-    /**
-     * @param status
-     */
-    public HandlerException(ResponseStatus status) {
-        super();
-        this.status = status;
-    }
+	private ResponseStatus status;
 
-    /**
-     * @param status
-     */
-    public HandlerException(ResponseStatus status, String message) {
-        super(message);
-        this.status = status;
-    }
+	/**
+	 * @param status the HTTP-status to be returned to the user
+	 */
+	public HandlerException(ResponseStatus status) {
+		super();
+		this.status = status;
+	}
 
-    public HandlerException(String message) {
-        super(message);
-        status = ResponseStatus.INTERNAL_SERVER_ERROR;
-    }
+	/**
+	 * @param status the HTTP-status to be returned to the user
+	 * @param message a message describing the exception
+	 */
+	public HandlerException(ResponseStatus status, String message) {
+		super(message);
+		this.status = status;
+	}
 
-    /**
-     * @param message
-     * @param arg1
-     */
-    public HandlerException(String message, Throwable thr) {
-        super(message, thr);
-        status = ResponseStatus.INTERNAL_SERVER_ERROR;
-    }
+	/**
+	 * @param message a message describing the exception
+	 */
+	public HandlerException(String message) {
+		super(message);
+		status = ResponseStatus.INTERNAL_SERVER_ERROR;
+	}
 
-    /**
-     * @param message
-     */
-    public HandlerException(Throwable message) {
-        super(message);
-        status = ResponseStatus.INTERNAL_SERVER_ERROR;
-    }
+	/**
+	 * @param message a message describing the exception
+	 * @param thr the cause of this exception
+	 */
+	public HandlerException(String message, Throwable thr) {
+		super(message, thr);
+		status = ResponseStatus.INTERNAL_SERVER_ERROR;
+	}
 
-    public ResponseStatus getStatus() {
-        return status;
-    }
+	/**
+	 * @param thr the cause of this exception
+	 */
+	public HandlerException(Throwable thr) {
+		super(thr);
+		status = ResponseStatus.INTERNAL_SERVER_ERROR;
+	}
+
+	/**
+	 * @return the HTTP response-status
+	 */
+	public ResponseStatus getStatus() {
+		return status;
+	}
 }

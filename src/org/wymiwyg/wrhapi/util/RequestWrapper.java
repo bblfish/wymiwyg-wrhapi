@@ -16,14 +16,16 @@
  */
 package org.wymiwyg.wrhapi.util;
 
+import java.net.InetAddress;
+import java.util.Set;
+
 import org.wymiwyg.wrhapi.HandlerException;
 import org.wymiwyg.wrhapi.HeaderName;
 import org.wymiwyg.wrhapi.MessageBody;
 import org.wymiwyg.wrhapi.Method;
 import org.wymiwyg.wrhapi.Request;
 import org.wymiwyg.wrhapi.RequestURI;
-
-import java.net.InetAddress;
+import org.wymiwyg.wrhapi.URIScheme;
 
 
 /**
@@ -52,7 +54,7 @@ public class RequestWrapper implements Request {
      * @throws HandlerException
      * @see org.wymiwyg.wrhapi.Request#getHeaderNames()
      */
-    public HeaderName[] getHeaderNames() throws HandlerException {
+    public Set<HeaderName> getHeaderNames() throws HandlerException {
         return wrapped.getHeaderNames();
     }
 
@@ -93,7 +95,7 @@ public class RequestWrapper implements Request {
      * @throws HandlerException
      * @see org.wymiwyg.wrhapi.Request#getScheme()
      */
-    public String getScheme() throws HandlerException {
+    public URIScheme getScheme() throws HandlerException {
         return wrapped.getScheme();
     }
 

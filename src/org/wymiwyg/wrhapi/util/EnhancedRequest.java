@@ -28,135 +28,184 @@ import org.apache.commons.logging.LogFactory;
 import org.wymiwyg.wrhapi.HandlerException;
 import org.wymiwyg.wrhapi.HeaderName;
 import org.wymiwyg.wrhapi.Request;
-
+import org.wymiwyg.wrhapi.URIScheme;
 
 /**
  * This is a Request-implemntation that provides additional methods. It is
  * implemented to wrap an existing Request providing a minimal performance
  * overhead.
- *
+ * 
  * @author reto
  */
 public class EnhancedRequest extends RequestWrapper {
-    private static final Log log = LogFactory.getLog(EnhancedRequest.class);
-    private String host;
+	private static final Log log = LogFactory.getLog(EnhancedRequest.class);
 
-    /**
-     *
-     */
-    public EnhancedRequest(Request wrapped) {
-        super(wrapped);
-    }
+	private String host;
 
-    /** reconstructs the requested URL
-     *
-     * @return the requested URL including all get parameters
-     * @throws HandlerException
-     */
-    public URL getFullRequestURL() throws HandlerException {
-        String requestURIString = getRequestURI().toString();
+	private int port = -1;
 
-        //this is because of strange requests see fom davfs2
-        if (requestURIString.equals("//")) {
-            requestURIString = "/";
-        }
+	/**
+	 * 
+	 */
+	public EnhancedRequest(Request wrapped) {
+		super(wrapped);
+	}
 
-        try {
-            return new URL(getRootURL(), requestURIString);
-        } catch (MalformedURLException e) {
-            throw new HandlerException(e);
-        }
-    }
+	/**
+	 * reconstructs the requested URL
+	 * 
+	 * @return the requested URL including all get parameters
+	 * @throws HandlerException
+	 */
+	public URL getFullRequestURL() throws HandlerException {
+		String requestURIString = getRequestURI().toString();
 
-    public URL getRequestURLWithoutParams() throws HandlerException {
-        String requestURIString = getRequestURI().getPath();
+		// this is because of strange requests see fom davfs2
+		if (requestURIString.equals("//")) {
+			requestURIString = "/";
+		}
 
-        //this is because of strange requests see fom davfs2
-        if (requestURIString.equals("//")) {
-            requestURIString = "/";
-        }
+		try {
+			return new URL(getRootURL(), requestURIString);
+		} catch (MalformedURLException e) {
+			throw new HandlerException(e);
+		}
+	}
 
-        try {
-            return new URL(getRootURL(), requestURIString);
-        } catch (MalformedURLException e) {
-            throw new HandlerException(e);
-        }
-    }
+	public URL getRequestURLWithoutParams() throws HandlerException {
+		String requestURIString = getRequestURI().getPath();
 
-    public URL getRootURL() throws HandlerException {
-        String scheme = getScheme();
-        int port = getPort();
-        StringBuffer url = new StringBuffer();
-        url.append(scheme);
-        url.append("://");
-        url.append(getHost());
+		// this is because of strange requests see fom davfs2
+		if (requestURIString.equals("//")) {
+			requestURIString = "/";
+		}
 
-        if ((port > 0) &&
-                ((scheme.equalsIgnoreCase("http") && (port != 80)) ||
-                (scheme.equalsIgnoreCase("https") && (port != 443)))) {
-            url.append(':');
-            url.append(port);
-        }
+		try {
+			return new URL(getRootURL(), requestURIString);
+		} catch (MalformedURLException e) {
+			throw new HandlerException(e);
+		}
+	}
 
-        try {
-            return new URL(url.toString());
-        } catch (MalformedURLException e) {
-            throw new HandlerException(e);
-        }
-    }
+	/**
+	 * @return the root URL, omitting the default-port (even if the host-header
+	 *         value contains it)
+	 * @throws HandlerException
+	 * 
+	 */
+	public URL getRootURL() throws HandlerException {
+		URIScheme scheme = getScheme();
+		int port = getRequestPort();
+		StringBuffer url = new StringBuffer();
+		url.append(scheme.getStringRepresentation());
+		url.append("://");
+		url.append(getHost());
 
-    public Cookie[] getCookies() throws HandlerException {
-        String[] headers = getHeaderValues(HeaderName.COOKIE);
+		if ((port > 0)
+				&& ((scheme == URIScheme.HTTP && (port != 80)) || (scheme == URIScheme.HTTPS && (port != 443)))) {
+			url.append(':');
+			url.append(port);
+		}
 
-        Collection<Cookie> resultCollection = new ArrayList<Cookie>();
+		try {
+			return new URL(url.toString());
+		} catch (MalformedURLException e) {
+			throw new HandlerException(e);
+		}
+	}
 
-        for (int i = 0; i < headers.length; i++) {
-            StringTokenizer tokens = new StringTokenizer(headers[i], ";,");
+	/**
+	 * @return the port extracted from the Host-Header, if no-host-header is
+	 *         available the value of getPort() is returned. if the host header
+	 *         doesn't contain a port the default port for the scheme is
+	 *         returned.
+	 * @throws HandlerException
+	 */
+	private int getRequestPort() throws HandlerException {
+		if (port == -1) {
+			try {
+				String hostHeader = getHeaderValues(HeaderName.HOST)[0];
+				int colonPos = hostHeader.indexOf(':');
+				if (colonPos != -1) {
+					port = Integer.parseInt(hostHeader.substring(colonPos + 1));
+				} else {
+					port = getDefaultPortForScheme(getScheme());
+				}
+			} catch (ArrayIndexOutOfBoundsException e) {
+				port = getPort();
+			}
+		}
+		return port;
+	}
 
-            while (tokens.hasMoreElements()) {
-                try {
-                    resultCollection.add(new Cookie(tokens.nextToken()));
-                } catch (InvalidCookieException e) {
-                    log.warn("Invalid cookie: " + e.toString());
-                }
-            }
-        }
+	/**
+	 * @param scheme
+	 * @return
+	 */
+	private int getDefaultPortForScheme(URIScheme scheme) {
+		if (scheme == URIScheme.HTTP) {
+			return 80;
+		}
+		if (scheme == URIScheme.HTTPS) {
+			return 443;
+		}
+		if (scheme == URIScheme.HTTPSY) {
+			return 80;
+		}
+		throw new RuntimeException("unsupprted scheme");
+	}
 
-        return resultCollection.toArray(new Cookie[resultCollection.size()]);
-    }
+	public Cookie[] getCookies() throws HandlerException {
+		String[] headers = getHeaderValues(HeaderName.COOKIE);
 
-    /**
-     * @return
-     * @throws HandlerException
-     */
-    private String getHost() throws HandlerException {
-        if (host == null) {
-            try {
-                host = getHeaderValues(HeaderName.HOST)[0];
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new HandlerException("No host header");
-            }
+		Collection<Cookie> resultCollection = new ArrayList<Cookie>();
 
-            int colonPos = host.indexOf(':');
+		for (int i = 0; i < headers.length; i++) {
+			StringTokenizer tokens = new StringTokenizer(headers[i], ";,");
 
-            if (colonPos != -1) {
-                host = host.substring(0, colonPos);
-            }
-        }
+			while (tokens.hasMoreElements()) {
+				try {
+					resultCollection.add(new Cookie(tokens.nextToken()));
+				} catch (InvalidCookieException e) {
+					log.warn("Invalid cookie: " + e.toString());
+				}
+			}
+		}
 
-        return host;
-    }
+		return resultCollection.toArray(new Cookie[resultCollection.size()]);
+	}
 
-    public Iterator<AcceptHeaderEntry> getAccept() throws HandlerException {
-        String[] acceptStrings = getHeaderValues(HeaderName.ACCEPT);
+	/**
+	 * @return
+	 * @throws HandlerException
+	 */
+	private String getHost() throws HandlerException {
+		if (host == null) {
+			try {
+				host = getHeaderValues(HeaderName.HOST)[0];
+			} catch (ArrayIndexOutOfBoundsException e) {
+				throw new HandlerException("No host header");
+			}
 
-        return new AcceptHeaderIterator(acceptStrings);
-    }
+			int colonPos = host.indexOf(':');
 
-    public AcceptLanguagesIterator getAcceptLanguages()
-        throws HandlerException {
-        String[] acceptStrings = getHeaderValues(HeaderName.ACCEPT_LANGUAGE);
+			if (colonPos != -1) {
+				host = host.substring(0, colonPos);
+			}
+		}
 
-        return new AcceptLanguagesIterator(acceptStrings);
-    }
+		return host;
+	}
+
+	public Iterator<AcceptHeaderEntry> getAccept() throws HandlerException {
+		String[] acceptStrings = getHeaderValues(HeaderName.ACCEPT);
+
+		return new AcceptHeaderIterator(acceptStrings);
+	}
+
+	public AcceptLanguagesIterator getAcceptLanguages() throws HandlerException {
+		String[] acceptStrings = getHeaderValues(HeaderName.ACCEPT_LANGUAGE);
+
+		return new AcceptLanguagesIterator(acceptStrings);
+	}
 }

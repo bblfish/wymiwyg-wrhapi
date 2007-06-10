@@ -235,7 +235,6 @@ public class MultiPartBodyImpl implements MultiPartBody {
 			formFiles.add(new KeyValuePair<FormFile>(name,new FormFileImpl(disposition
 					.getFileName(), new MimeType(mimeType), data)));
 		} catch (MimeTypeParseException e) {
-			// TODO Auto-generated catch block
 			throw new RuntimeException(e);
 		}
 

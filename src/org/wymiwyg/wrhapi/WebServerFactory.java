@@ -22,58 +22,75 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-
 /**
  * @author reto
- *
+ * 
  */
 public abstract class WebServerFactory {
-    public abstract WebServer startNewWebServer(Handler handler,
-        ServerBinding serverBinding) throws IOException;
+	/**
+	 * Starts a new webserver
+	 * 
+	 * @param handler
+	 *            the handler handling all requests
+	 * @param serverBinding
+	 *            the serverbinding to which the server is connected
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract WebServer startNewWebServer(Handler handler,
+			ServerBinding serverBinding) throws IOException;
 
-    public static WebServerFactory newInstance() {
-        //not using getSystemResources as we use only one provider anymway
-        InputStream providerList = ClassLoader.getSystemResourceAsStream(
-                "META-INF/services/" + WebServerFactory.class.getName());
+	/**
+	 * this returns a WebServerFactory by looking fo a resource
+	 * META-INF/services/org.wymiwyg.wrhapi.WebServerFactory containing the FQN
+	 * of an implementation.
+	 * 
+	 * @return a WebServerFactory
+	 */
+	public static WebServerFactory newInstance() {
+		// not using getSystemResources as we use only one provider anymway
+		InputStream providerList = ClassLoader
+				.getSystemResourceAsStream("META-INF/services/"
+						+ WebServerFactory.class.getName());
 
-        if (providerList == null) {
-            throw new RuntimeException("Unable to find provider");
-        }
+		if (providerList == null) {
+			throw new RuntimeException("Unable to find provider");
+		}
 
-        BufferedReader bufferedReader;
+		BufferedReader bufferedReader;
 
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(
-                        providerList, "utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			bufferedReader = new BufferedReader(new InputStreamReader(
+					providerList, "utf-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 
-        try {
-            for (String s = bufferedReader.readLine(); s != null;
-                    s = bufferedReader.readLine()) {
-                int poundPos = s.indexOf('#');
+		try {
+			for (String s = bufferedReader.readLine(); s != null; s = bufferedReader
+					.readLine()) {
+				int poundPos = s.indexOf('#');
 
-                if (poundPos > -1) {
-                    s = s.substring(0, poundPos);
-                }
+				if (poundPos > -1) {
+					s = s.substring(0, poundPos);
+				}
 
-                s = s.trim();
+				s = s.trim();
 
-                Class clazz = Class.forName(s);
+				Class clazz = Class.forName(s);
 
-                return (WebServerFactory) clazz.newInstance();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+				return (WebServerFactory) clazz.newInstance();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 
-        throw new RuntimeException("Unable to find provider");
-    }
+		throw new RuntimeException("Unable to find provider");
+	}
 }

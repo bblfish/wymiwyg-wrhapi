@@ -18,7 +18,7 @@ package org.wymiwyg.wrhapi;
 
 
 /**
- * Basically a case-insensitive String
+ * A case-insensitive String representing an HTTP-Header
  *
  * @author reto
  */
@@ -26,7 +26,7 @@ public class HeaderName {
     public static final Object CONTENT_DISPOSITION = new HeaderName(
             "content-disposition");
     public static final HeaderName TRANSFER_ENCODING = new HeaderName(
-            "transfer-tncoding");
+            "transfer-encoding");
     public static HeaderName ACCEPT = new HeaderName("accept");
     public static HeaderName HOST = new HeaderName("host");
     public static HeaderName CONTENT_TYPE = new HeaderName("content-type");
@@ -61,24 +61,27 @@ public class HeaderName {
             "if-none-match");
     private String lowerCaseName;
 
-    /**
-     *
-     */
     private HeaderName(String lowerCaseName) {
         this.lowerCaseName = lowerCaseName;
     }
 
+ 
+    /**
+     * Static method to create new instances
+     * 
+     * @param name the name of the header for which an instance is to be returned
+     * @return an instance of HeaderName for the specified name
+     */
     public static HeaderName get(String name) {
         return new HeaderName(name.toLowerCase());
     }
-
+    
+    @Override
     public String toString() {
         return lowerCaseName;
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    @Override
     public boolean equals(Object object) {
         if (!object.getClass().equals(HeaderName.class)) {
             return false;
@@ -87,9 +90,10 @@ public class HeaderName {
         }
     }
 
+    @Override
     /**
-     * @see java.lang.Object#hashCode()
-     */
+     * @return the hashcode of the lower-case string of the header name
+     */ 
     public int hashCode() {
         return lowerCaseName.hashCode();
     }

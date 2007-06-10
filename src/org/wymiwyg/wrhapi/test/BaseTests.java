@@ -38,6 +38,7 @@ import org.wymiwyg.wrhapi.Request;
 import org.wymiwyg.wrhapi.Response;
 import org.wymiwyg.wrhapi.ResponseStatus;
 import org.wymiwyg.wrhapi.ServerBinding;
+import org.wymiwyg.wrhapi.URIScheme;
 import org.wymiwyg.wrhapi.WebServer;
 import org.wymiwyg.wrhapi.WebServerFactory;
 import org.wymiwyg.wrhapi.util.MessageBody2Read;
@@ -207,6 +208,34 @@ public class BaseTests extends TestCase {
 			webServer.stop();
 		}
 	}
+	
+	public void testScheme() throws Exception {
+		final URIScheme[] schemes = new URIScheme[1];
+		WebServer webServer = createServer().startNewWebServer(new Handler() {
+			public void handle(Request request, Response response)
+					throws HandlerException {
+				log.info("handling scheme-test");
+				schemes[0] = request.getScheme();
+			}
+		}, serverBinding);
+
+		try {
+			URL serverURL = new URL("http://"
+					+ serverBinding.getInetAddress().getHostAddress() + ":"
+					+ serverBinding.getPort() + "/");
+			URLConnection connection = serverURL.openConnection();
+			connection.connect();
+			//this is for the connection to get real
+			connection.getHeaderField("Cookie");
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			webServer.stop();
+		}
+		assertEquals(URIScheme.HTTP, schemes[0]);
+	}
 
 	/**
 	 * set a "cookie" request header and expects the same value in the "cookie"
@@ -239,6 +268,39 @@ public class BaseTests extends TestCase {
 			// for the handler to be invoked, something of the response has to
 			// be asked
 			assertEquals(headerValue, connection.getHeaderField("Cookie"));
+			connection.getContentLength();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			webServer.stop();
+		}
+	}
+
+	/**
+	 * Test whether the getPort method returns the actual request port and not the one
+	 * included in the host-header
+	 */
+	public void testPort() throws Exception {
+		WebServer webServer = createServer().startNewWebServer(new Handler() {
+			public void handle(Request request, Response response)
+					throws HandlerException {
+				assertEquals(serverBinding.getPort(), request.getPort());
+			}
+		}, serverBinding);
+
+		try {
+			URL serverURL = new URL("http://"
+					+ serverBinding.getInetAddress().getHostAddress() + ":"
+					+ serverBinding.getPort() + "/");
+			URLConnection connection = serverURL.openConnection();
+			connection.setRequestProperty("host", "foo:88");
+			connection.setRequestProperty("FOO", "bar");
+			connection.connect();
+			// for the handler to be invoked, something of the response has to
+			// be asked
+			//assertEquals(headerValue, connection.getHeaderField("Cookie"));
 			connection.getContentLength();
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
@@ -285,7 +347,9 @@ public class BaseTests extends TestCase {
 	/**
 	 * test is the returned status code matches the one of the HandlerException
 	 * thrown, with a HandlerException thrown before a body is set
-	 * @throws Exception on failure
+	 * 
+	 * @throws Exception
+	 *             on failure
 	 */
 	public void testExceptionStatusCodeBeforeBody() throws Exception {
 		final int statusCode = 302;
@@ -294,6 +358,54 @@ public class BaseTests extends TestCase {
 					throws HandlerException {
 				log.info("handling testStatusCode");
 				response.setHeader(HeaderName.SERVER, "Ad-Hoc testing server");
+				throw new HandlerException(ResponseStatus
+						.getInstanceByCode(statusCode));
+			}
+		}, serverBinding);
+
+		try {
+			URL serverURL = new URL("http://"
+					+ serverBinding.getInetAddress().getHostAddress() + ":"
+					+ serverBinding.getPort() + "/");
+			HttpClient client = new HttpClient();
+			HttpMethod method = new HeadMethod(serverURL.toString());
+			method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+					new DefaultHttpMethodRetryHandler(0, false));
+			client.executeMethod(method);
+			// for the handler to be invoked, something of the response has to
+			// be asked
+			assertEquals(statusCode, method.getStatusCode());
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			webServer.stop();
+		}
+	}
+
+	/**
+	 * test is the returned status code matches the one of the HandlerException
+	 * thrown, with a HandlerException thrown after a body is set
+	 * 
+	 * @throws Exception
+	 *             on failure
+	 */
+	public void testExceptionStatusCodeAfterBody() throws Exception {
+		final int statusCode = 302;
+		WebServer webServer = createServer().startNewWebServer(new Handler() {
+			public void handle(Request request, Response response)
+					throws HandlerException {
+				log.info("handling testStatusCode");
+				response.setHeader(HeaderName.SERVER, "Ad-Hoc testing server");
+				response.setBody(new MessageBody2Write() {
+					public void writeTo(WritableByteChannel out)
+							throws IOException {
+						out.write(ByteBuffer.wrap("my body\n\ncontent\n"
+								.getBytes()));
+					}
+				});
+
 				throw new HandlerException(ResponseStatus.getInstanceByCode(statusCode));
 			}
 		}, serverBinding);
@@ -319,52 +431,6 @@ public class BaseTests extends TestCase {
 		}
 	}
 
-	
-	/**
-	 * test is the returned status code matches the one of the HandlerException
-	 * thrown, with a HandlerException thrown after a body is set
-	 * @throws Exception on failure
-	 */
-	public void testExceptionStatusCodeAfterBody() throws Exception {
-		final int statusCode = 302;
-		WebServer webServer = createServer().startNewWebServer(new Handler() {
-			public void handle(Request request, Response response)
-					throws HandlerException {
-				log.info("handling testStatusCode");
-				response.setHeader(HeaderName.SERVER, "Ad-Hoc testing server");
-				response.setBody(new MessageBody2Write() {
-					public void writeTo(WritableByteChannel out)
-							throws IOException {
-						out.write(ByteBuffer.wrap("my body\n\ncontent\n".getBytes()));
-						throw new RuntimeException("foo");
-					}
-				});
-				
-				//throw new HandlerException(ResponseStatus.getInstanceByCode(statusCode));
-			}
-		}, serverBinding);
-
-		try {
-			URL serverURL = new URL("http://"
-					+ serverBinding.getInetAddress().getHostAddress() + ":"
-					+ serverBinding.getPort() + "/");
-			HttpClient client = new HttpClient();
-			HttpMethod method = new HeadMethod(serverURL.toString());
-			method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-					new DefaultHttpMethodRetryHandler(0, false));
-			client.executeMethod(method);
-			// for the handler to be invoked, something of the response has to
-			// be asked
-			assertEquals(statusCode, method.getStatusCode());
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			webServer.stop();
-		}
-	}
-	
 	/**
 	 * @deprecated uses getBody;
 	 * @throws Exception

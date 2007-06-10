@@ -17,47 +17,78 @@
 package org.wymiwyg.wrhapi;
 
 import java.net.InetAddress;
-
+import java.util.Set;
 
 /**
  * @author reto
  */
 public interface Request {
-    public Method getMethod() throws HandlerException;
 
-    /**
-     * This methods returns the request-uri including the get parameters.
-     * @return
-     */
-    public RequestURI getRequestURI() throws HandlerException;
-    
-    public MessageBody getMessageBody() throws HandlerException;
+	/**
+	 * @return the method of this request
+	 * @throws HandlerException
+	 */
+	public Method getMethod() throws HandlerException;
 
-    /**
-     * @deprecated use getMessageBody instead
-     * @return
-     * @throws HandlerException
-     */
-    public Object getBody() throws HandlerException;
+	/**
+	 * This methods returns the request-uri including the get parameters.
+	 * 
+	 * @return the request-uri
+	 * @throws HandlerException
+	 */
+	public RequestURI getRequestURI() throws HandlerException;
 
-    /**
-     *
-     * @return the header-names as lower-case strings
-     */
-    public HeaderName[] getHeaderNames() throws HandlerException;
+	/**
+	 * @return the message body of this request
+	 * @throws HandlerException
+	 */
+	public MessageBody getMessageBody() throws HandlerException;
 
-    /** Returns the value of a header-field, if the header-field is not present an array
-     * of size 0 is returned
-     *
-     * @param headerName
-     * @return
-     */
-    public String[] getHeaderValues(HeaderName headerName)
-        throws HandlerException;
+	/**
+	 * @deprecated use getMessageBody instead
+	 * @return
+	 * @throws HandlerException
+	 */
+	public Object getBody() throws HandlerException;
 
-    public int getPort() throws HandlerException;
+	/**
+	 * According to RFC 2616: "The order in which header fields with differing
+	 * field names are received is not significant."
+	 * 
+	 * @return the all <code>HeaderName<code>S in the order in which they appear
+	 * @throws HandlerException
+	 */
+	public Set<HeaderName> getHeaderNames() throws HandlerException;
 
-    public String getScheme() throws HandlerException;
+	/**
+	 * Returns the value of a header-field, if the header-field is not present
+	 * an array of size 0 is returned
+	 * 
+	 * @param headerName
+	 *            the <code>HeaderName</code> for which the values are to be
+	 *            returned
+	 * @return the header-values in the order they appear in the request.
+	 * @throws HandlerException
+	 */
+	public String[] getHeaderValues(HeaderName headerName)
+			throws HandlerException;
 
-    public InetAddress getRemoteHost() throws HandlerException;
+	/**
+	 * @return the TCP port to which this request was directed
+	 * @throws HandlerException
+	 */
+	public int getPort() throws HandlerException;
+
+	/**
+	 * @return a string representing the protocol scheme used (like 'http' or
+	 *         'https')
+	 * @throws HandlerException
+	 */
+	public URIScheme getScheme() throws HandlerException;
+
+	/**
+	 * @return the host issuing the request
+	 * @throws HandlerException
+	 */
+	public InetAddress getRemoteHost() throws HandlerException;
 }

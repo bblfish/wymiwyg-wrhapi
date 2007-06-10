@@ -22,5 +22,8 @@ package org.wymiwyg.wrhapi;
  *
  */
 public interface WebServer {
+    /**
+     * stops the webserver
+     */
     public void stop();
 }

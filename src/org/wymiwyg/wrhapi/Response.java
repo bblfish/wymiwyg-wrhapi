@@ -21,6 +21,12 @@ package org.wymiwyg.wrhapi;
  * @author reto
  */
 public interface Response {
+	
+    /** sets the body of the response
+     * 
+     * @param body the body to be set
+     * @throws HandlerException
+     */
     public void setBody(MessageBody body) throws HandlerException;
 
     /**
@@ -29,6 +35,7 @@ public interface Response {
      *
      * @param headerName
      * @param value
+     * @throws HandlerException 
      */
     public void setHeader(HeaderName headerName, Object value)
         throws HandlerException;
@@ -45,6 +52,12 @@ public interface Response {
     public void addHeader(HeaderName headerName, Object value)
         throws HandlerException;
 
+    /**
+     * Sets the response-status
+     * 
+     * @param status
+     * @throws HandlerException
+     */
     public void setResponseStatus(ResponseStatus status)
         throws HandlerException;
 }

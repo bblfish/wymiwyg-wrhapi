@@ -16,66 +16,89 @@
  */
 package org.wymiwyg.wrhapi;
 
-
 /**
  * A request Method (GET, POST, PUT, DELETE, ...).
- *
+ * 
  * @author reto
  */
 public class Method {
-    public static final Method POST = new Method("POST");
-    public static final Method GET = new Method("GET");
-    public static final Method PUT = new Method("PUT");
-    public static final Method DELETE = new Method("DELETE");
-    public static final Method OPTIONS = new Method("OPTIONS");
-    public static final Method TRACE = new Method("TRACE");
-    public static final Method CONNECT = new Method("CONNECT");
-    public static final Method HEAD = new Method("HEAD");
+	public static final Method POST = new Method("POST");
 
-    //URIQUA
-    public static final Method MGET = new Method("MGET");
+	public static final Method GET = new Method("GET");
 
-    //WEBDAV
-    public static final Method PROPFIND = new Method("PROPFIND");
-    public static final Method PROPPATCH = new Method("PROPPATCH");
-    public static final Method MKCOL = new Method("MKCOL");
-    public static final Method COPY = new Method("COPY");
-    public static final Method MOVE = new Method("MOVE");
-    public static final Method LOCK = new Method("LOCK");
-    public static final Method UNLOCK = new Method("UNLOCK");
-    private String name;
+	public static final Method PUT = new Method("PUT");
 
-    private Method(String name) {
-        this.name = name;
-    }
+	public static final Method DELETE = new Method("DELETE");
 
-    public static Method get(String name) {
-        return new Method(name.toUpperCase());
-    }
+	public static final Method OPTIONS = new Method("OPTIONS");
 
-    public String toString() {
-        return "Method: " + name;
-    }
+	public static final Method TRACE = new Method("TRACE");
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object object) {
-        if (!(object instanceof Method)) {
-            return false;
-        }
+	public static final Method CONNECT = new Method("CONNECT");
 
-        return name.equals(((Method) object).name);
-    }
+	public static final Method HEAD = new Method("HEAD");
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode() {
-        return name.hashCode();
-    }
+	// URIQUA
+	public static final Method MGET = new Method("MGET");
 
-    public String getName() {
-        return name;
-    }
+	// WEBDAV
+	public static final Method PROPFIND = new Method("PROPFIND");
+
+	public static final Method PROPPATCH = new Method("PROPPATCH");
+
+	public static final Method MKCOL = new Method("MKCOL");
+
+	public static final Method COPY = new Method("COPY");
+
+	public static final Method MOVE = new Method("MOVE");
+
+	public static final Method LOCK = new Method("LOCK");
+
+	public static final Method UNLOCK = new Method("UNLOCK");
+
+	private String name;
+
+	private Method(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * returns a method object for a string representation of a the method
+	 * 
+	 * @param name
+	 *            the verb of the method
+	 * @return
+	 */
+	public static Method get(String name) {
+		return new Method(name.toUpperCase());
+	}
+
+	@Override
+	public String toString() {
+		return "Method: " + name;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Method)) {
+			return false;
+		}
+
+		return name.equals(((Method) object).name);
+	}
+
+	/**
+	 * @return the hashcode of the upper-case string representing the method.
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return name.hashCode();
+	}
+
+	/**
+	 * @return the upper-case string representing this method.
+	 */
+	public String getName() {
+		return name;
+	}
 }

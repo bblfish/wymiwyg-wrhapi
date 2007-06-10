@@ -16,12 +16,29 @@
  */
 package org.wymiwyg.wrhapi;
 
-
 /**
+ * A handler processes a web-requests. The handler passed to
+ * <code>org.wymiwyg.wrhapi.WebServerFactory.startNewWebServer(Handler, ServerBinding)</code>
+ * is invoked on every request the server gets, in other context invocation may
+ * be condition, for example the Handler passed to the constructor
+ * <code>org.wymiwyg.wrhapi.filter.impl.FilterRunner.FilterRunner(Filter[], Handler)</code>
+ * is invoked only if all filters forwards the request.
+ * 
  * @author reto
- *
+ * 
  */
 public interface Handler {
-    public void handle(Request request, Response response)
-        throws HandlerException;
+
+	/**
+	 * When a request is to be handled by this Handler this method is invoked .
+	 * 
+	 * @param request
+	 *            the request to be processed
+	 * @param response
+	 *            a response object for adding response-headers and body
+	 * @throws HandlerException
+	 * 
+	 */
+	public void handle(Request request, Response response)
+			throws HandlerException;
 }
