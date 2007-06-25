@@ -31,10 +31,19 @@ public class URIScheme {
 	//must be before other variable call constructor
 	static Map<String, URIScheme> stringInstanceMap = Collections.synchronizedMap(new HashMap<String, URIScheme>());
 	
+	/**
+	 * the HTTP-Uri Scheme
+	 */
 	public final static URIScheme HTTP = new URIScheme("http");
 
+	/**
+	 * the HTTPS-Uri Scheme
+	 */
 	public final static URIScheme HTTPS = new URIScheme("https");
 
+	/**
+	 * the HTTPSY-Yurl Scheme
+	 */
 	public final static URIScheme HTTPSY = new URIScheme("httpsy");
 
 	private String lowerCaseString;

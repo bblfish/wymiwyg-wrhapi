@@ -30,6 +30,11 @@ public class ResponseWrapper implements Response {
 	
 	private Response wrapped;
 
+	/**
+	 * Creates a Response forwarding all method calls to a wrapped Response
+	 * 
+	 * @param wrapped the wrapped Response object
+	 */
 	protected ResponseWrapper(Response wrapped) {
 		this.wrapped = wrapped;
 	}

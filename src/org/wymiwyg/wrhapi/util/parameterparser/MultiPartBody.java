@@ -14,48 +14,45 @@
  *  limitations under the License.
  *
  */
-package org.wymiwyg.wrhapi.util.bodyparser;
-
+package org.wymiwyg.wrhapi.util.parameterparser;
 
 /**
- * Represents a multipart/form-data message as specified by RFC 23288. It
+ * Represents a multipart/form-data message as specified by RFC 2388. It
  * currently supports only files and fields (text), as no implementation is
  * known to support file lists or external references
  * 
  * @author reto
  * 
  */
-public interface MultiPartBody {
+public interface MultiPartBody extends ParameterCollection {
 
-	/**
-	 * @param name the name of the parameter
-	 * @return the values of the parameter
-	 */
-	public abstract String[] getTextParameterValues(String name);
-
-	/**
-	 * @param name the name of the parameter
-	 * @return the values of the parameter
-	 */
-	public abstract FormFile[] getFormFileParameterValues(String name);
-	
-	/**
-	 * @return all parameter names in the order they appear in the message
-	 */
-	public abstract String[] getParameterNames();
-	
-	/**
-	 * @return the text parameter names in the order they appear in the message
-	 */
-	public abstract String[] getTextParameterNames();
-
-	
 	/**
 	 * @return the file parameter names in the order they appear in the message
 	 */
 	public abstract String[] getFileParameterNames();
 
+	/**
+	 * @param name
+	 *            the name of the parameter
+	 * @return the values of the parameter
+	 */
+	public abstract FormFile[] getFormFileParameterValues(String name);
 
-	
-	
+	/**
+	 * @return all parameter names in the order they appear in the message
+	 */
+	public abstract String[] getParameterNames();
+
+	/**
+	 * @return the text parameter names in the order they appear in the message
+	 */
+	public abstract String[] getTextParameterNames();
+
+	/**
+	 * @param name
+	 *            the name of the parameter
+	 * @return the values of the parameter
+	 */
+	public abstract String[] getTextParameterValues(String name);
+
 }

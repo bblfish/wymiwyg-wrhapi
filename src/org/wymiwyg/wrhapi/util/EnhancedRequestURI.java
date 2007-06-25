@@ -26,12 +26,21 @@ import org.wymiwyg.wrhapi.RequestURI;
  */
 public class EnhancedRequestURI extends RequestURIWrapper {
     /**
-     *
+     * Decorates a RequestURI
+     * 
+     * @param base 
      */
-    public EnhancedRequestURI(RequestURI wrapped) {
-        super(wrapped);
+    public EnhancedRequestURI(RequestURI base) {
+        super(base);
     }
 
+    /**
+     * @param name
+     * @return the first parameter with the specified name
+     * @throws HandlerException
+     * @Deprecated a similar method should be in <code>org.wymiwyg.wrhapi.util.parameterparser.ParameterCollection</code>
+     */
+    @Deprecated
     public String getParameter(String name) throws HandlerException {
         try {
             return getParameterValues(name)[0];

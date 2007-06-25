@@ -22,11 +22,12 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Iterator;
 
-import org.wymiwyg.wrhapi.util.MessageBody2Read;
-import org.wymiwyg.wrhapi.util.bodyparser.KeyValuePair;
-import org.wymiwyg.wrhapi.util.bodyparser.MessageBodyUtil;
-
 import junit.framework.TestCase;
+
+import org.wymiwyg.wrhapi.util.MessageBody2Read;
+import org.wymiwyg.wrhapi.util.parameterparser.KeyValuePair;
+import org.wymiwyg.wrhapi.util.parameterparser.ParameterValue;
+import org.wymiwyg.wrhapi.util.parameterparser.URLEncodedParameterCollection;
 
 /**
  * @author reto
@@ -38,13 +39,13 @@ public class MessageBodyUtilTest extends TestCase {
 	 *  test parseFormUrlencoded with an empty body
 	 */
 	public void testParseFormUrlencodedEmpty() {
-		Iterator<KeyValuePair> paramIter = MessageBodyUtil.parseFormUrlencoded(new MessageBody2Read() {
+		Iterator<KeyValuePair<ParameterValue>> paramIter = new URLEncodedParameterCollection(new MessageBody2Read() {
 
 			public ReadableByteChannel read() throws IOException {
 				return Channels.newChannel(new ByteArrayInputStream("".getBytes("utf-8")));
 			}
 			
-		});
+		}).iterator();
 		assertFalse(paramIter.hasNext());
 	}
 

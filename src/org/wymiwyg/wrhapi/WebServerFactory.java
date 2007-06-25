@@ -77,7 +77,7 @@ public abstract class WebServerFactory {
 
 				s = s.trim();
 
-				Class clazz = Class.forName(s);
+				Class<?> clazz = Class.forName(s);
 
 				return (WebServerFactory) clazz.newInstance();
 			}

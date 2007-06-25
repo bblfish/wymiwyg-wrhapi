@@ -51,6 +51,7 @@
  * http://www.apache.org/.
  */
 package org.wymiwyg.wrhapi.util;
+
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,42 +62,44 @@ import javax.activation.MimeType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 /**
  * @author reto
  */
-public class MediaRange implements Comparable {
+public class MediaRange implements Comparable<MediaRange> {
 	private static Log logger = LogFactory.getLog(MediaRange.class);
 	private String type, subtype;
-	//accessed by AccedHeaderEntry
+	// accessed by AccedHeaderEntry
 	Map<String, String> parameters = new HashMap<String, String>();
+
 	/**
-	 *  
+	 * @param pattern 
+	 * @throws InvalidPatternException 
+	 * 
 	 */
 	public MediaRange(String pattern) throws InvalidPatternException {
 		try {
 			StringTokenizer subtypeParamTokens;
-			
+
 			if (pattern.indexOf('/') > -1) {
 				StringTokenizer tokens = new StringTokenizer(pattern, "/");
 				type = tokens.nextToken();
 				String subtypeAnParams;
 				subtypeAnParams = tokens.nextToken();
-				subtypeParamTokens = new StringTokenizer(
-						subtypeAnParams, ";");
+				subtypeParamTokens = new StringTokenizer(subtypeAnParams, ";");
 				subtype = subtypeParamTokens.nextToken();
 			} else {
 				if (pattern.charAt(0) != '*') {
-					throw new InvalidPatternException("Invalid pattern " + pattern
-							+ ": ");
+					throw new InvalidPatternException("Invalid pattern "
+							+ pattern + ": ");
 				}
 				type = "*";
 				subtype = "*";
-				subtypeParamTokens = new StringTokenizer(
-						pattern, ";");
-				 subtypeParamTokens.nextToken(); //read the "*"
-						
+				subtypeParamTokens = new StringTokenizer(pattern, ";");
+				subtypeParamTokens.nextToken(); // read the "*"
+
 			}
-			
+
 			while (subtypeParamTokens.hasMoreTokens()) {
 				String parameterToken = subtypeParamTokens.nextToken();
 				StringTokenizer nameValueSplitter = new StringTokenizer(
@@ -110,12 +113,17 @@ public class MediaRange implements Comparable {
 					+ ": ");
 		}
 	}
-public boolean match(MimeType mimeType) {
-		if  (match(type, mimeType.getPrimaryType())
+
+	/**
+	 * @param mimeType
+	 * @return true if the specified mimeType matches this MediaRange
+	 */
+	public boolean match(MimeType mimeType) {
+		if (match(type, mimeType.getPrimaryType())
 				&& match(subtype, mimeType.getSubType())) {
-			Iterator parameterIter = parameters.keySet().iterator();
+			Iterator<String> parameterIter = parameters.keySet().iterator();
 			while (parameterIter.hasNext()) {
-				String currentName = (String)parameterIter.next();
+				String currentName = parameterIter.next();
 				String typeParameterValue = mimeType.getParameter(currentName);
 				if (typeParameterValue == null) {
 					return false;
@@ -128,11 +136,13 @@ public boolean match(MimeType mimeType) {
 		} else {
 			return false;
 		}
-	}	/**
-		  * @param subtype
-		  * @param string
-		  * @return
-		  */
+	}
+
+	/**
+	 * @param subtype
+	 * @param string
+	 * @return
+	 */
 	private boolean match(String pattern, String string) {
 		boolean result = pattern.equals("*") || pattern.equals(string);
 		if (logger.isDebugEnabled()) {
@@ -140,21 +150,23 @@ public boolean match(MimeType mimeType) {
 		}
 		return result;
 	}
+
 	public String toString() {
 		StringWriter resultWriter = new StringWriter();
 		resultWriter.write(type);
 		resultWriter.write('/');
 		resultWriter.write(subtype);
-		Iterator parameterIter = parameters.keySet().iterator();
+		Iterator<String> parameterIter = parameters.keySet().iterator();
 		while (parameterIter.hasNext()) {
-			String currentName = (String)parameterIter.next();
-			String currentValue = (String) parameters.get(currentName);
+			String currentName = parameterIter.next();
+			String currentValue = parameters.get(currentName);
 			resultWriter.write("; ");
 			resultWriter.write(currentName);
 			resultWriter.write(currentValue);
 		}
 		return resultWriter.toString();
 	}
+
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -165,12 +177,17 @@ public boolean match(MimeType mimeType) {
 		}
 		return false;
 	}
+
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return type.hashCode() & subtype.hashCode();
 	}
+
+	/**
+	 * @return the number of '*' in the range (0,1 or 2)
+	 */
 	public int getAsterixCount() {
 		if (subtype.equals("*")) {
 			return 2;
@@ -180,18 +197,15 @@ public boolean match(MimeType mimeType) {
 		}
 		return 0;
 	}
-	/**
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object other) {
+
+	public int compareTo(MediaRange other) {
 		if (equals(other)) {
 			return 0;
 		}
-		MediaRange otherM = (MediaRange) other;
-		if (getAsterixCount() > otherM.getAsterixCount()) {
+		if (getAsterixCount() > other.getAsterixCount()) {
 			return 1;
 		}
-		if (getAsterixCount() < otherM.getAsterixCount()) {
+		if (getAsterixCount() < other.getAsterixCount()) {
 			return -1;
 		}
 		return toString().compareTo(other.toString());

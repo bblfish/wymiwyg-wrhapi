@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.wymiwyg.wrhapi.util.bodyparser;
+package org.wymiwyg.wrhapi.util.parameterparser.multipart;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -25,9 +25,13 @@ import java.io.UnsupportedEncodingException;
  */
 public class DelimiterNotFoundException extends IOException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2002878162243872583L;
 	byte[] remainingBytes;
 	/**
-	 * @param bs
+	 * @param remainingBytes
 	 */
 	public DelimiterNotFoundException(byte[] remainingBytes) {
 		super("Delimiter not found");

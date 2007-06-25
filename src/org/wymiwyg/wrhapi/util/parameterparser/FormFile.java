@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.wymiwyg.wrhapi.util.bodyparser;
+package org.wymiwyg.wrhapi.util.parameterparser;
 
 import org.wymiwyg.commons.mediatypes.MimeType;
 
@@ -22,23 +22,23 @@ import org.wymiwyg.commons.mediatypes.MimeType;
  * Represents a file as contained in a multipart/form-data message
  * 
  * @author reto
- *
+ * 
  */
-public interface FormFile {
-	
-	/**
-	 * @return the mime-type of the file
-	 */
-	public MimeType getMimeType();
-	
+public interface FormFile extends ParameterValue {
+
 	/**
 	 * @return the content of the file
 	 */
 	public byte[] getContent();
-	
+
 	/**
 	 * @return the filename provided by the sender or null if not supplied
 	 */
 	public String getFileName();
+
+	/**
+	 * @return the mime-type of the file
+	 */
+	public MimeType getMimeType();
 
 }

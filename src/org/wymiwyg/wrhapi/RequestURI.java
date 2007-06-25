@@ -16,25 +16,84 @@
  */
 package org.wymiwyg.wrhapi;
 
-
 /**
+ * Represents a request as defined by section 5.1.2 of RFC 2616.
+ * 
  * @author reto
  */
 public interface RequestURI {
-    /**
-     * @return the path without parameters.
-     */
-    public String getPath();
 
-    /**
-     * @return the parameter names in the order they first appear in the request
-     */
-    public String[] getParameterNames();
+	/**
+	 * @see org.wymiwyg.wrhapi.RequestURI.getType()
+	 */
+	public enum Type {
+		/**
+		 * From RFC 2616 <quote>The asterisk "*" means that the request does not
+		 * apply to a particular resource, but to the server itself, and is only
+		 * allowed when the method used does not necessarily apply to a
+		 * resource.</quote>
+		 */
+		NO_RESOURCE,
+		/**
+		 * From RFC 2616 <quote>The absoluteURI form is REQUIRED when the
+		 * request is being made to a proxy.</quote> <quote>To allow for
+		 * transition to absoluteURIs in all requests in future versions of
+		 * HTTP, all HTTP/1.1 servers MUST accept the absoluteURI form in
+		 * requests, even though HTTP/1.1 clients will only generate them in
+		 * requests to proxies.</quote>
+		 */
+		ABSOLUTE_URI,
+		/**
+		 * A type of request-URI containing only the abs-path section of the
+		 * http URL
+		 */
+		ABS_PATH,
+		/**
+		 * Used by the HTTP CONNECT method
+		 */
+		AUTHORITY
+	}
 
-    /**
-     *
-     * @param name the name of the parameter
-     * @return an array with the values of the ger parameter or null if the parameter is not present
-     */
-    public String[] getParameterValues(String name);
+	/**
+	 * Section 5.1.2 of RFC 2616 defines 4 options for Request-URIs
+	 * 
+	 * @return the type of this Request-URI
+	 */
+	public Type getType();
+
+	/**
+	 * The abs-path of an http URL as defined in section 3.2.2 of RFC 2616, i.e.
+	 * the path including the query-part
+	 * 
+	 * @return the abs-path or null if this request is of type NO_RESOURCE or
+	 *         AUTHORITY
+	 */
+	public String getAbsPath();
+	
+	/**
+	 * @return the query-part, i.e. the section after "?" or null
+	 */
+	public String getQuery();
+
+	/**
+	 * @return the path without query-part, and without "?".
+	 */
+	public String getPath();
+
+	/**
+	 * @deprecated use org.wymiwyg.wrhapi.util.parameterparser.URLEncodedParameterCollection instead
+	 * @return the parameter names in the order they first appear in the request
+	 */
+	@Deprecated
+	public String[] getParameterNames();
+
+	/**
+	 * @deprecated use org.wymiwyg.wrhapi.util.parameterparser.URLEncodedParameterCollection instead
+	 * @param name
+	 *            the name of the parameter
+	 * @return an array with the values of the ger parameter or null if the
+	 *         parameter is not present
+	 */
+	@Deprecated
+	public String[] getParameterValues(String name);
 }

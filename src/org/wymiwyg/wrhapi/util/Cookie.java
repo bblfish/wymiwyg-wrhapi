@@ -16,110 +16,119 @@
  */
 package org.wymiwyg.wrhapi.util;
 
-
 import java.util.Date;
-
 
 /**
  * @author reto
  * @date Jun 17, 2004
  */
 public class Cookie {
-    private String name;
-    private String value;
-    private String path;
-    private String maxAge;
+	private String name;
+	private String value;
+	private String path;
+	private String maxAge;
 
-    public Cookie(String cookie) throws InvalidCookieException {
-        int colonPos = cookie.indexOf(";");
+	/**
+	 * Creates a Cookie from a String as it appears as value of the
+	 * cookie-header
+	 * 
+	 * @param cookie the String representation of the cooke
+	 * @throws InvalidCookieException
+	 */
+	public Cookie(String cookie) throws InvalidCookieException {
+		int colonPos = cookie.indexOf(";");
 
-        if (colonPos != -1) {
-            cookie = cookie.substring(0, cookie.indexOf(";"));
-        }
+		if (colonPos != -1) {
+			cookie = cookie.substring(0, cookie.indexOf(";"));
+		}
 
-        int equalPos = cookie.indexOf("=");
+		int equalPos = cookie.indexOf("=");
 
-        if (equalPos == -1) {
-            throw new InvalidCookieException("No = sign found");
-        }
+		if (equalPos == -1) {
+			throw new InvalidCookieException("No = sign found");
+		}
 
-        name = cookie.substring(0, equalPos).trim();
-        value = cookie.substring(cookie.indexOf("=") + 1, cookie.length());
-    }
+		name = cookie.substring(0, equalPos).trim();
+		value = cookie.substring(cookie.indexOf("=") + 1, cookie.length());
+	}
 
-    /**
-     * @param name
-     * @param value
-     */
-    public Cookie(String name, String value) {
-        super();
-        this.name = name;
-        this.value = value;
-    }
+	/**
+	 * @param name
+	 * @param value
+	 */
+	public Cookie(String name, String value) {
+		super();
+		this.name = name;
+		this.value = value;
+	}
 
-    /**
-     * @return Returns the name.
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return Returns the name.
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @return Returns the value.
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 * @return Returns the value.
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(name);
-        buffer.append('=');
-        buffer.append(value);
-        buffer.append("; path=");
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(name);
+		buffer.append('=');
+		buffer.append(value);
+		buffer.append("; path=");
 
-        if (path == null) {
-            buffer.append("/");
-        } else {
-            buffer.append(path);
-        }
+		if (path == null) {
+			buffer.append("/");
+		} else {
+			buffer.append(path);
+		}
 
-        if (maxAge != null) {
-            buffer.append("; Max-Age=");
-            buffer.append(maxAge);
+		if (maxAge != null) {
+			buffer.append("; Max-Age=");
+			buffer.append(maxAge);
 
-            if (!maxAge.equals("-1")) {
-                buffer.append("; expires=");
-                buffer.append(new HTTPDateFormat().format(
-                        new Date(System.currentTimeMillis() +
-                            (((long) Integer.parseInt(maxAge)) * 1000))));
-            }
-        }
+			if (!maxAge.equals("-1")) {
+				buffer.append("; expires=");
+				buffer.append(new HTTPDateFormat().format(new Date(System
+						.currentTimeMillis()
+						+ (((long) Integer.parseInt(maxAge)) * 1000))));
+			}
+		}
 
-        return buffer.toString();
-    }
+		return buffer.toString();
+	}
 
-    public String getPath() {
-        return path;
-    }
+	/**
+	 * @return the path attribute of this cookie
+	 */
+	public String getPath() {
+		return path;
+	}
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+	/**
+	 * Set the path-attribute of this cookie
+	 * 
+	 * @param path the path to be set
+	 */
+	public void setPath(String path) {
+		this.path = path;
+	}
 
-    /**
-     * Set the lifetime of the cookie in seconds (by using the Max-Age attribute
-     * in the http-header
-     *
-     * @param maxAge
-     *            the maximum age in seconds
-     */
-    public void setMaxAge(int maxAge) {
-        this.maxAge = Integer.toString(maxAge);
-    }
+	/**
+	 * Set the lifetime of the cookie in seconds (by using the Max-Age attribute
+	 * in the http-header
+	 * 
+	 * @param maxAge
+	 *            the maximum age in seconds
+	 */
+	public void setMaxAge(int maxAge) {
+		this.maxAge = Integer.toString(maxAge);
+	}
 }

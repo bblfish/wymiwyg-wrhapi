@@ -27,11 +27,12 @@ import java.util.TreeSet;
 /**
  * @author reto
  */
-public class AcceptLanguagesIterator implements Iterator {
+public class AcceptLanguagesIterator implements Iterator<AcceptLanguageHeaderEntry> {
     Log log = LogFactory.getLog(AcceptLanguagesIterator.class);
     private Iterator<AcceptLanguageHeaderEntry> iterator;
 
     /**
+     * @param acceptHeaders the accept-headers as strings
      *
      */
     public AcceptLanguagesIterator(String[] acceptHeaders) {
@@ -56,7 +57,7 @@ public class AcceptLanguagesIterator implements Iterator {
     /**
      * @see java.util.Iterator#next()
      */
-    public Object next() {
+    public AcceptLanguageHeaderEntry next() {
         return nextAcceptLanguageHeader();
     }
 

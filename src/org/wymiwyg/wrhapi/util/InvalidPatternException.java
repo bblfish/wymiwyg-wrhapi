@@ -17,7 +17,7 @@ public class InvalidPatternException extends Exception {
 	private static final long serialVersionUID = -8054959769631976110L;
 
 	/**
-	 * @param arg0
+	 * @param message
 	 */
 	public InvalidPatternException(String message) {
 		super(message);

@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.wymiwyg.wrhapi.util.bodyparser;
+package org.wymiwyg.wrhapi.util.parameterparser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,13 +37,16 @@ import org.apache.commons.logging.LogFactory;
 import org.wymiwyg.commons.mediatypes.MimeType;
 import org.wymiwyg.wrhapi.HandlerException;
 import org.wymiwyg.wrhapi.HeaderName;
+import org.wymiwyg.wrhapi.MessageBody;
 import org.wymiwyg.wrhapi.Request;
+import org.wymiwyg.wrhapi.util.parameterparser.multipart.DelimiterInputStream;
 
 /**
  * @author reto
  * 
  */
-public class MultiPartBodyImpl implements MultiPartBody {
+public class MultiPartBodyImpl extends AbstractParameterCollection implements
+		MultiPartBody {
 
 	/**
 	 * @author reto
@@ -54,6 +57,7 @@ public class MultiPartBodyImpl implements MultiPartBody {
 		private byte[] content;
 		private String fileName;
 		private MimeType type;
+
 		/**
 		 * @param fileName
 		 * @param type
@@ -69,14 +73,18 @@ public class MultiPartBodyImpl implements MultiPartBody {
 			return content;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.wymiwyg.wrhapi.util.bodyparser.FormFile#getFileName()
 		 */
 		public String getFileName() {
 			return fileName;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.wymiwyg.wrhapi.util.bodyparser.FormFile#getMimeType()
 		 */
 		public MimeType getMimeType() {
@@ -162,6 +170,9 @@ public class MultiPartBodyImpl implements MultiPartBody {
 
 	}
 
+	/**
+	 * the maximum size of the parsed message-body
+	 */
 	protected static int maxSize = 1024 * 1024 * 50; // 50MB
 
 	final static byte[] DOUBLE_LINE_BREAK = { 13, 10, 13, 10 };
@@ -170,35 +181,61 @@ public class MultiPartBodyImpl implements MultiPartBody {
 
 	final static Log log = LogFactory.getLog(MultiPartBodyImpl.class);
 
-	List<String> allFieldNames = new ArrayList<String>();
+	private static String getBoundary(MimeType type) throws HandlerException {
+		String boundary = type.getParameter("boundary");
 
-	List<KeyValuePair<FormFile>> formFiles = new ArrayList<KeyValuePair<FormFile>>();
+		if (boundary == null) {
+			throw new HandlerException("boundary is not set");
+		}
+		return boundary;
+	}
 
-	List<KeyValuePair<String>> formTexts = new ArrayList<KeyValuePair<String>>();
-	
 	/**
-	 * @param request
-	 * @param type
+	 * @param messageBody
+	 * @return
 	 * @throws HandlerException
 	 */
-	public MultiPartBodyImpl(Request request, MimeType type)
+	private static InputStream getInputStream(MessageBody messageBody)
 			throws HandlerException {
 		try {
-			if (Long.parseLong(request
-					.getHeaderValues(HeaderName.CONTENT_LENGTH)[0]) > maxSize) {
-				throw new IOException(
-						"Content too long - sent files are limited in size");
-			}
+			return Channels.newInputStream(messageBody.read());
+		} catch (IOException e) {
+			throw new HandlerException(e);
+		}
+	}
 
-			String boundary = type.getParameter("boundary");
+	/**
+	 * @param request
+	 * @return
+	 * @throws HandlerException
+	 */
+	private static InputStream getInputStream(Request request)
+			throws HandlerException {
+		return getInputStream(request.getMessageBody());
 
-			if (boundary == null) {
-				throw new IOException("boundary is not set");
-			}
-			InputStream rawIn;
-			rawIn = Channels.newInputStream(request.getMessageBody().read());
-			DelimiterInputStream in = new DelimiterInputStream(rawIn);
+	}
 
+	// private List<KeyValuePair<ParameterValue>> rawCollection= new
+	// ArrayList<KeyValuePair<ParameterValue>>();
+
+	private List<KeyValuePair<FormFile>> formFiles = new ArrayList<KeyValuePair<FormFile>>();
+
+	private List<KeyValuePair<String>> formTexts = new ArrayList<KeyValuePair<String>>();
+
+	List<String> allFieldNames = new ArrayList<String>();
+
+	/**
+	 * creates a MultiPartBody by parsing a stream
+	 * 
+	 * @param rawIn
+	 * @param boundary
+	 *            the boundary-string delimiting the parts
+	 * @throws HandlerException
+	 */
+	public MultiPartBodyImpl(final InputStream rawIn, final String boundary)
+			throws HandlerException {
+		DelimiterInputStream in = new DelimiterInputStream(rawIn);
+		try {
 			ByteArrayOutputStream delimiterBaos = new ByteArrayOutputStream();
 			delimiterBaos.write(45);// dash
 			delimiterBaos.write(45);
@@ -222,6 +259,100 @@ public class MultiPartBodyImpl implements MultiPartBody {
 	}
 
 	/**
+	 * @param messageBody
+	 * @param boundary
+	 * @throws HandlerException
+	 */
+	public MultiPartBodyImpl(MessageBody messageBody, String boundary)
+			throws HandlerException {
+		this(getInputStream(messageBody), boundary);
+	}
+
+	/**
+	 * @param request
+	 * @param type
+	 * @throws HandlerException
+	 * @throws IOException
+	 */
+	public MultiPartBodyImpl(Request request, MimeType type)
+			throws HandlerException {
+		this(getInputStream(request), getBoundary(type));
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getFileParameterNames()
+	 */
+	public String[] getFileParameterNames() {
+		String[] result = new String[formFiles.size()];
+		int i = 0;
+		for (KeyValuePair<FormFile> keyValue : formFiles) {
+			result[i++] = keyValue.key;
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getFormFileParameterValues(java.lang.String)
+	 */
+	public FormFile[] getFormFileParameterValues(String name) {
+		List<FormFile> values = new ArrayList<FormFile>();
+		for (KeyValuePair<FormFile> keyValue : formFiles) {
+			if (keyValue.key.equals(name)) {
+				values.add(keyValue.value);
+			}
+		}
+		return values.toArray(new FormFile[values.size()]);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getParameterNames()
+	 */
+	public String[] getParameterNames() {
+		return allFieldNames.toArray(new String[allFieldNames.size()]);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getTextParameterNames()
+	 */
+	public String[] getTextParameterNames() {
+		String[] result = new String[formTexts.size()];
+		int i = 0;
+		for (KeyValuePair<String> keyValue : formTexts) {
+			result[i++] = keyValue.key;
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getTextParameterValues(java.lang.String)
+	 */
+	public String[] getTextParameterValues(String name) {
+		List<String> values = new ArrayList<String>();
+		for (KeyValuePair<String> keyValue : formTexts) {
+			if (keyValue.key.equals(name)) {
+				values.add(keyValue.value);
+			}
+		}
+		return values.toArray(new String[values.size()]);
+	}
+
+	@Override
+	public Iterator<KeyValuePair<ParameterValue>> iterator() {
+		return rawCollection.iterator();
+	}
+
+	/**
 	 * @param result
 	 * @param disposition
 	 * @param string
@@ -232,12 +363,14 @@ public class MultiPartBodyImpl implements MultiPartBody {
 			byte[] data) throws IOException {
 		String name = disposition.getName();
 		try {
-			formFiles.add(new KeyValuePair<FormFile>(name,new FormFileImpl(disposition
-					.getFileName(), new MimeType(mimeType), data)));
+			rawCollection.add(new KeyValuePair<ParameterValue>(name,
+					new FormFileImpl(disposition.getFileName(), new MimeType(
+							mimeType), data)));
+			formFiles.add(new KeyValuePair<FormFile>(name, new FormFileImpl(
+					disposition.getFileName(), new MimeType(mimeType), data)));
 		} catch (MimeTypeParseException e) {
 			throw new RuntimeException(e);
 		}
-
 
 	}
 
@@ -249,122 +382,15 @@ public class MultiPartBodyImpl implements MultiPartBody {
 	private void addTextField(Disposition disposition, byte[] data) {
 		String name = disposition.getName();
 		try {
-			formTexts.add(new KeyValuePair<String>(name,new String(data, "utf-8")));
+			rawCollection.add(new KeyValuePair<ParameterValue>(name,
+					new StringParameterValue(new String(data, "utf-8"))));
+			formTexts.add(new KeyValuePair<String>(name, new String(data,
+					"utf-8")));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
-
-//	/**
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getFileContents(java.lang.String)
-//	 */
-//	private byte[][] getFileContents(String parametername) {
-//		Object[] descriptors = (Object[]) fields.get(parametername);
-//		if (descriptors == null) {
-//			return null;
-//		}
-//		byte[][] datas = new byte[descriptors.length][];
-//		for (int i = 0; i < descriptors.length; i++) {
-//			try {
-//				datas[i] = descriptors[i].getData();
-//			} catch (ClassCastException ex) {
-//			}
-//		}
-//		return datas;
-//	}
-
-//	/**
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getFileContentType(java.lang.String)
-//	 */
-//	private MimeType getFileContentType(String parametername) {
-//		MimeType[] values = getFileContentTypes(parametername);
-//		if (values != null) {
-//			return values[0];
-//		} else {
-//			return null;
-//		}
-//	}
-//
-//	/**
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getFileContentTypes(java.lang.String)
-//	 */
-//	private MimeType[] getFileContentTypes(String parametername) {
-//		Object[] descriptors = (Object[]) fields.get(parametername);
-//		if (descriptors == null) {
-//			return null;
-//		}
-//		MimeType[] types = new MimeType[descriptors.length];
-//		for (int i = 0; i < descriptors.length; i++) {
-//			try {
-//				types[i] = ((FormFileImpl) descriptors[i]).getMimeType();
-//			} catch (ClassCastException ex) {
-//			}
-//		}
-//		return types;
-//	}
-//
-//	/**
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getFileName(java.lang.String)
-//	 */
-//	private String getFileName(String parametername) {
-//		String[] values = getFileNames(parametername);
-//		if (values != null) {
-//			return values[0];
-//		} else {
-//			return null;
-//		}
-//	}
-//
-//	/**
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getFileNames(java.lang.String)
-//	 */
-//	private String[] getFileNames(String parametername) {
-//		Object[] descriptors = (Object[]) fields.get(parametername);
-//		if (descriptors == null) {
-//			return null;
-//		}
-//		String[] fileNames = new String[descriptors.length];
-//		for (int i = 0; i < descriptors.length; i++) {
-//			try {
-//				fileNames[i] = ((FormFileImpl) descriptors[i]).getFileName();
-//			} catch (ClassCastException ex) {
-//			}
-//		}
-//		return fileNames;
-//	}
-//
-//	/**
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getParameterNames()
-//	 */
-//	private String[] getParameterNames() {
-//		return (String[]) fields.keySet().toArray(new String[fields.size()]);
-//	}
-//
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getParameterObjects(java.lang.String)
-//	 */
-//	private Object[] getParameterObjects(String name) {
-//		return (Object[]) fields.get(name);
-//	}
-//
-//	/**
-//	 * @see org.wymiwyg.rwcf.form.MultiPartBody#getParameterValues(java.lang.String)
-//	 */
-//	private String[] getParameterValues(String name) {
-//		Object[] elements = (Object[]) fields.get(name);
-//		if (elements == null) {
-//			return null;
-//		}
-//		String[] result = new String[elements.length];
-//		for (int i = 0; i < result.length; i++) {
-//			result[i] = elements[i].toString();
-//		}
-//		return result;
-//
-//	}
 
 	/**
 	 * @param in
@@ -411,7 +437,8 @@ public class MultiPartBodyImpl implements MultiPartBody {
 	 * @throws
 	 * @throws IOException
 	 */
-	private Map<HeaderName, String> readHeaders(DelimiterInputStream in) throws IOException {
+	private Map<HeaderName, String> readHeaders(DelimiterInputStream in)
+			throws IOException {
 		Map<HeaderName, String> result = new HashMap<HeaderName, String>();
 		for (byte[] line = in.readTill(LINE_BREAK); line.length > 0; line = in
 				.readTill(LINE_BREAK)) {
@@ -432,63 +459,6 @@ public class MultiPartBodyImpl implements MultiPartBody {
 			result.put(HeaderName.get(headerName), value);
 		}
 		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getFileParameterNames()
-	 */
-	public String[] getFileParameterNames() {
-		String[] result = new String[formFiles.size()];
-		int i = 0;
-		for (KeyValuePair<FormFile> keyValue : formFiles) {
-			result[i++] = keyValue.key;
-		}
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getFormFileParameterValues(java.lang.String)
-	 */
-	public FormFile[] getFormFileParameterValues(String name) {
-		List<FormFile> values = new ArrayList<FormFile>();
-		for (KeyValuePair<FormFile> keyValue : formFiles) {
-			if (keyValue.key.equals(name)) {
-				values.add(keyValue.value);
-			}
-		}
-		return values.toArray(new FormFile[values.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getParameterNames()
-	 */
-	public String[] getParameterNames() {
-		return allFieldNames.toArray(new String[allFieldNames.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getTextParameterNames()
-	 */
-	public String[] getTextParameterNames() {
-		String[] result = new String[formTexts.size()];
-		int i = 0;
-		for (KeyValuePair<String> keyValue : formTexts) {
-			result[i++] = keyValue.key;
-		}
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getTextParameterValues(java.lang.String)
-	 */
-	public String[] getTextParameterValues(String name) {
-		List<String> values = new ArrayList<String>();
-		for (KeyValuePair<String> keyValue : formTexts) {
-			if (keyValue.key.equals(name)) {
-				values.add(keyValue.value);
-			}
-		}
-		return values.toArray(new String[values.size()]);
 	}
 
 }

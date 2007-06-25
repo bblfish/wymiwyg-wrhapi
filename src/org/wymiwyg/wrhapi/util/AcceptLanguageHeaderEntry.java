@@ -24,12 +24,12 @@ import java.util.StringTokenizer;
  * @author reto
  * @date Jun 4, 2004
  */
-public class AcceptLanguageHeaderEntry implements Comparable {
+public class AcceptLanguageHeaderEntry implements Comparable<AcceptLanguageHeaderEntry> {
     private LocaleRange localeRange;
     private float q;
 
     /**
-     *
+     * @param headerEntry a single entry in the Accept-Language header
      */
     public AcceptLanguageHeaderEntry(String headerEntry) {
         StringTokenizer tokens = new StringTokenizer(headerEntry, ";");
@@ -94,21 +94,18 @@ public class AcceptLanguageHeaderEntry implements Comparable {
         return q;
     }
 
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object other) {
-        AcceptLanguageHeaderEntry otherA = (AcceptLanguageHeaderEntry) other;
 
-        if (q > otherA.q) {
+    public int compareTo(AcceptLanguageHeaderEntry other) {
+
+        if (q > other.q) {
             return -1;
         }
 
-        if (q < otherA.q) {
+        if (q < other.q) {
             return 1;
         }
 
-        return localeRange.toString().compareTo(otherA.localeRange.toString());
+        return localeRange.toString().compareTo(other.localeRange.toString());
     }
 
     /**

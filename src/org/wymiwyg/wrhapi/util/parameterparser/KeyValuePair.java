@@ -1,9 +1,10 @@
-package org.wymiwyg.wrhapi.util.bodyparser;
+package org.wymiwyg.wrhapi.util.parameterparser;
 
 /**
  * @author reto
- * @param <T> The type of the value
- *
+ * @param <T>
+ *            The type of the value
+ * 
  */
 public class KeyValuePair<T> {
 	String key;

@@ -16,62 +16,36 @@
  */
 package org.wymiwyg.wrhapi.filter.impl.test;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
-
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.wymiwyg.commons.util.Util;
 
 import org.wymiwyg.wrhapi.Handler;
 import org.wymiwyg.wrhapi.HandlerException;
 import org.wymiwyg.wrhapi.HeaderName;
 import org.wymiwyg.wrhapi.MessageBody;
-import org.wymiwyg.wrhapi.Method;
 import org.wymiwyg.wrhapi.Request;
 import org.wymiwyg.wrhapi.Response;
-import org.wymiwyg.wrhapi.ResponseStatus;
 import org.wymiwyg.wrhapi.ServerBinding;
 import org.wymiwyg.wrhapi.WebServer;
 import org.wymiwyg.wrhapi.WebServerFactory;
 import org.wymiwyg.wrhapi.filter.Filter;
 import org.wymiwyg.wrhapi.filter.impl.FilterRunner;
-import org.wymiwyg.wrhapi.util.MessageBody2Read;
 import org.wymiwyg.wrhapi.util.MessageBody2Write;
 import org.wymiwyg.wrhapi.util.ResponseWrapper;
-
-import sun.misc.Regexp;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author reto
@@ -96,9 +70,6 @@ public class FilterTests extends TestCase {
 			super(response);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.wymiwyg.wrhapi.Response#setBody(org.wymiwyg.wrhapi.MessageBody)
-		 */
 		public void setBody(final MessageBody body) throws HandlerException {
 			super.setBody(new MessageBody2Write() {
 
@@ -144,7 +115,7 @@ public class FilterTests extends TestCase {
 
 	}
 
-	private static final Log log = LogFactory.getLog(FilterTests.class);
+	//private static final Log log = LogFactory.getLog(FilterTests.class);
 
 	ServerBinding serverBinding = new ServerBinding() {
 		public InetAddress getInetAddress() {
@@ -160,12 +131,16 @@ public class FilterTests extends TestCase {
 		}
 	};
 
+	/**
+	 * @return the server used in the tests
+	 */
 	protected WebServerFactory createServer() {
 		return WebServerFactory.newInstance();
 	}
 
 	/**
 	 * this tests with a cookie-setting and a spell-checking filter.
+	 * @throws Exception 
 	 */
 	public void testMultipleFilters() throws Exception {
 		final String body = "Hullo World";

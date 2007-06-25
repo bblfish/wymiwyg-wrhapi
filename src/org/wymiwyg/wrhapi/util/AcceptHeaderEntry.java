@@ -56,7 +56,7 @@ package org.wymiwyg.wrhapi.util;
 /**
  * @author reto
  */
-public class AcceptHeaderEntry implements Comparable {
+public class AcceptHeaderEntry implements Comparable<AcceptHeaderEntry> {
 	MediaRange range;
 	float q;
 	/**
@@ -68,7 +68,8 @@ public class AcceptHeaderEntry implements Comparable {
 		this.q = q;
 	}
 	/**
-	 * @param currentstring
+	 * @param string 
+	 * @throws InvalidPatternException 
 	 */
 	public AcceptHeaderEntry(String string) throws InvalidPatternException {
 		if ("*".equals(string)) { // I think this is illegal but some clients like Java/1.4.2_03 on OS X do
@@ -99,22 +100,17 @@ public class AcceptHeaderEntry implements Comparable {
 	public MediaRange getRange() {
 		return range;
 	}
-	/**
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object other) {
-		AcceptHeaderEntry otherA = (AcceptHeaderEntry) other;
-		if (q > otherA.q) {
+
+	public int compareTo(AcceptHeaderEntry other) {
+		if (q > other.q) {
 			return -1;
 		}
-		if (q < otherA.q) {
+		if (q < other.q) {
 			return 1;
 		}
-		return range.compareTo(otherA.range);
+		return range.compareTo(other.range);
 	}
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	public boolean equals(Object other) {
 		if (other.getClass().equals(AcceptHeaderEntry.class)) {
 			return (q == ((AcceptHeaderEntry) other).q)
@@ -123,15 +119,11 @@ public class AcceptHeaderEntry implements Comparable {
 			return false;
 		}
 	}
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
+	
 	public int hashCode() {
 		return range.hashCode();
 	}
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(range.toString());
 		buffer.append("; q=");

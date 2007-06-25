@@ -34,6 +34,10 @@ public class LocaleRange {
         this.locale = locale;
     }
 
+    /** Checks is a locale matches this range
+     * @param locale
+     * @return true id locale matches the range represented by this object, false otherwise
+     */
     public boolean match(Locale locale) {
         if (this.locale == null) {
             return true;

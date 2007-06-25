@@ -61,14 +61,14 @@ import java.util.TimeZone;
  */
 public class HTTPDateFormat extends SimpleDateFormat {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = -6639216920987040626L;
 	
     private static final TimeZone GMT_TIMEZONE = TimeZone.getTimeZone("GMT");
     private static final DateFormatSymbols EN_SYMBOLS = new DateFormatSymbols(new Locale("en"));
 
+    /**
+     * Creates an instance of HTTPDateFormat
+     */
     public HTTPDateFormat() {
     		super("EEE, dd MMM yyyy kk:mm:ss zzz",EN_SYMBOLS);
         super.setTimeZone(GMT_TIMEZONE);

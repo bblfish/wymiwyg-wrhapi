@@ -84,14 +84,24 @@ public class BaseTests extends TestCase {
 		}
 	};
 
+	/**
+	 * @return the server used in the tests
+	 */
 	protected WebServerFactory createServer() {
 		return WebServerFactory.newInstance();
 	}
 
+	
+	/**
+	 * @throws Exception
+	 */
 	public void testSimpleBodyWriting() throws Exception {
 		testSimpleBody(true);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testSimpleBodyInputStream() throws Exception {
 		testSimpleBody(false);
 	}
@@ -143,6 +153,9 @@ public class BaseTests extends TestCase {
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testLongBody() throws Exception {
 		final byte[] body = Util.createRandomBytes(10 * 1000000);
 		WebServer webServer = createServer().startNewWebServer(new Handler() {
@@ -183,6 +196,9 @@ public class BaseTests extends TestCase {
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testResponseHeader() throws Exception {
 		final String headerValue = "bla blah";
 		WebServer webServer = createServer().startNewWebServer(new Handler() {
@@ -209,6 +225,9 @@ public class BaseTests extends TestCase {
 		}
 	}
 	
+	/**
+	 * @throws Exception
+	 */
 	public void testScheme() throws Exception {
 		final URIScheme[] schemes = new URIScheme[1];
 		WebServer webServer = createServer().startNewWebServer(new Handler() {
@@ -281,6 +300,7 @@ public class BaseTests extends TestCase {
 	/**
 	 * Test whether the getPort method returns the actual request port and not the one
 	 * included in the host-header
+	 * @throws Exception 
 	 */
 	public void testPort() throws Exception {
 		WebServer webServer = createServer().startNewWebServer(new Handler() {
@@ -311,6 +331,9 @@ public class BaseTests extends TestCase {
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testStatusCode() throws Exception {
 		final int statusCode = 302;
 		WebServer webServer = createServer().startNewWebServer(new Handler() {

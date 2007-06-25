@@ -18,72 +18,50 @@ package org.wymiwyg.wrhapi.util;
 
 import org.wymiwyg.wrhapi.RequestURI;
 
-import java.io.UnsupportedEncodingException;
-
-import java.net.URLEncoder;
-
-
 /**
  * @author reto
  */
 public class RequestURIWrapper implements RequestURI {
-    private RequestURI wrapped;
+	private RequestURI wrapped;
 
-    public RequestURIWrapper(RequestURI wrapped) {
-        this.wrapped = wrapped;
-    }
+	/**
+	 * creates a wrapper for a RequestURI
+	 * 
+	 * @param wrapped
+	 *            the base RequestURI
+	 */
+	public RequestURIWrapper(RequestURI wrapped) {
+		this.wrapped = wrapped;
+	}
 
-    /**
-     * @see org.wymiwyg.wrhapi.RequestURI#getPath()
-     */
-    public String getPath() {
-        return wrapped.getPath();
-    }
+	public String getPath() {
+		return wrapped.getPath();
+	}
 
-    /**
-     * @see org.wymiwyg.wrhapi.RequestURI#getParameterNames()
-     */
-    public String[] getParameterNames() {
-        return wrapped.getParameterNames();
-    }
+	@Deprecated
+	public String[] getParameterNames() {
+		return wrapped.getParameterNames();
+	}
 
-    /**
-     * @see org.wymiwyg.wrhapi.RequestURI#getParamterValues(java.lang.String)
-     */
-    public String[] getParameterValues(String name) {
-        return wrapped.getParameterValues(name);
-    }
+	@Deprecated
+	public String[] getParameterValues(String name) {
+		return wrapped.getParameterValues(name);
+	}
 
-    /**
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        StringBuffer buffer = new StringBuffer(getPath());
-        boolean first = true;
-        String[] parameterNames = getParameterNames();
+	@Override
+	public String toString() {
+		return getAbsPath();
+	}
 
-        for (int i = 0; i < parameterNames.length; i++) {
-            String[] values = getParameterValues(parameterNames[i]);
+	public String getAbsPath() {
+		return wrapped.getAbsPath();
+	}
 
-            for (int j = 0; j < values.length; j++) {
-                if (first) {
-                    buffer.append('?');
-                    first = false;
-                } else {
-                    buffer.append('&');
-                }
+	public Type getType() {
+		return wrapped.getType();
+	}
 
-                buffer.append(parameterNames[i]);
-                buffer.append('=');
-
-                try {
-                    buffer.append(URLEncoder.encode(values[j], "utf-8"));
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        return buffer.toString();
-    }
+	public String getQuery() {
+		return wrapped.getQuery();
+	}
 }

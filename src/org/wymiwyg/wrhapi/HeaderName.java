@@ -23,40 +23,119 @@ package org.wymiwyg.wrhapi;
  * @author reto
  */
 public class HeaderName {
+	//TODO add comments referencing to the respective RFC section
+    /**
+     * 
+     */
     public static final Object CONTENT_DISPOSITION = new HeaderName(
             "content-disposition");
+    /**
+     * 
+     */
     public static final HeaderName TRANSFER_ENCODING = new HeaderName(
             "transfer-encoding");
+    /**
+     * 
+     */
     public static HeaderName ACCEPT = new HeaderName("accept");
+    /**
+     * 
+     */
     public static HeaderName HOST = new HeaderName("host");
+    /**
+     * 
+     */
     public static HeaderName CONTENT_TYPE = new HeaderName("content-type");
+    /**
+     * 
+     */
     public static HeaderName ACCEPT_LANGUAGE = new HeaderName("accept-language");
+    /**
+     * 
+     */
     public static HeaderName CONTENT_LENGTH = new HeaderName("content-length");
+    /**
+     * 
+     */
     public static HeaderName CONTENT_ENCODING = new HeaderName(
             "content-encoding"); //RFC 2616 Section 7.1, like gzip
+    /**
+     * 
+     */
     public static HeaderName CONTENT_LANGUAGE = new HeaderName(
             "content-language");
+    /**
+     * 
+     */
     public static HeaderName COOKIE = new HeaderName("cookie");
+    /**
+     * 
+     */
     public static HeaderName SET_COOKIE = new HeaderName("set-cookie");
+    /**
+     * 
+     */
     public static HeaderName LOCATION = new HeaderName("location");
+    /**
+     * 
+     */
     public static HeaderName REFERER = new HeaderName("referer");
+    /**
+     * 
+     */
     public static final HeaderName PRAGMA = new HeaderName("pragma");
+    /**
+     * 
+     */
     public static final HeaderName EXPIRES = new HeaderName("expires");
+    /**
+     * 
+     */
     public static final HeaderName AUTHORIZATION = new HeaderName(
             "authorization");
+    /**
+     * 
+     */
     public static final HeaderName CACHE_CONTROL = new HeaderName(
             "cache-control");
+    /**
+     * 
+     */
     public static final HeaderName USER_AGENT = new HeaderName("user-agent");
+    /**
+     * 
+     */
     public static final HeaderName WWW_AUTHENTICATE = new HeaderName(
             "www-authenticate");
+    /**
+     * 
+     */
     public static final HeaderName DEPTH = new HeaderName("depth");
+    /**
+     * 
+     */
     public static final HeaderName DAV = new HeaderName("dav");
+    /**
+     * 
+     */
     public static final HeaderName ALLOW = new HeaderName("allow");
+    /**
+     * 
+     */
     public static final HeaderName LAST_MODIFIED = new HeaderName(
             "last-modified");
+    /**
+     * 
+     */
     public static final HeaderName SERVER = new HeaderName("server");
+    /**
+     * 
+     */
     public static final HeaderName IF_MODIFIED_SINCE = new HeaderName(
             "if-modified-since");
+    /**
+     * 
+     */
     public static final HeaderName IF_NONE_MATCH = new HeaderName(
             "if-none-match");
     private String lowerCaseName;

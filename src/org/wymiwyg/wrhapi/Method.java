@@ -22,38 +22,83 @@ package org.wymiwyg.wrhapi;
  * @author reto
  */
 public class Method {
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method POST = new Method("POST");
 
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method GET = new Method("GET");
 
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method PUT = new Method("PUT");
 
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method DELETE = new Method("DELETE");
 
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method OPTIONS = new Method("OPTIONS");
 
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method TRACE = new Method("TRACE");
 
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method CONNECT = new Method("CONNECT");
-
+	
+	/**
+	 * see rfc 2616 section 9
+	 */
 	public static final Method HEAD = new Method("HEAD");
 
-	// URIQUA
+	/** URIQUA method, see http://sw.nokia.com/uriqa/URIQA.html
+	 */
 	public static final Method MGET = new Method("MGET");
 
-	// WEBDAV
+	/**
+	 * Webdav method, see RFC 2518
+	 */
 	public static final Method PROPFIND = new Method("PROPFIND");
 
+	/**
+	 * Webdav method, see RFC 2518
+	 */
 	public static final Method PROPPATCH = new Method("PROPPATCH");
 
+	/**
+	 * Webdav method, see RFC 2518
+	 */
 	public static final Method MKCOL = new Method("MKCOL");
 
+	/**
+	 * Webdav method, see RFC 2518
+	 */
 	public static final Method COPY = new Method("COPY");
 
+	/**
+	 * Webdav method, see RFC 2518
+	 */
 	public static final Method MOVE = new Method("MOVE");
 
+	/**
+	 * Webdav method, see RFC 2518
+	 */
 	public static final Method LOCK = new Method("LOCK");
 
+	/**
+	 * Webdav method, see RFC 2518
+	 */
 	public static final Method UNLOCK = new Method("UNLOCK");
 
 	private String name;

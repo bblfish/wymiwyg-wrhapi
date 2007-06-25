@@ -45,10 +45,13 @@ public class EnhancedRequest extends RequestWrapper {
 	private int port = -1;
 
 	/**
+	 * Creates an EnhancedRequest from a Request.
+	 * 
+	 * @param base the base request to be decorated
 	 * 
 	 */
-	public EnhancedRequest(Request wrapped) {
-		super(wrapped);
+	public EnhancedRequest(Request base) {
+		super(base);
 	}
 
 	/**
@@ -72,6 +75,12 @@ public class EnhancedRequest extends RequestWrapper {
 		}
 	}
 
+	/**
+	 * Reconstructs the URL of the request omitting the query part.
+	 * 
+	 * @return
+	 * @throws HandlerException
+	 */
 	public URL getRequestURLWithoutParams() throws HandlerException {
 		String requestURIString = getRequestURI().getPath();
 
@@ -155,6 +164,10 @@ public class EnhancedRequest extends RequestWrapper {
 		throw new RuntimeException("unsupprted scheme");
 	}
 
+	/**
+	 * @return the cookes in this request
+	 * @throws HandlerException
+	 */
 	public Cookie[] getCookies() throws HandlerException {
 		String[] headers = getHeaderValues(HeaderName.COOKIE);
 
@@ -197,12 +210,24 @@ public class EnhancedRequest extends RequestWrapper {
 		return host;
 	}
 
+	/**
+	 * The accept-header entries sorted by q-value
+	 * 
+	 * @return an iterator of the AcceptHeaderEntryS
+	 * @throws HandlerException
+	 */
 	public Iterator<AcceptHeaderEntry> getAccept() throws HandlerException {
 		String[] acceptStrings = getHeaderValues(HeaderName.ACCEPT);
 
 		return new AcceptHeaderIterator(acceptStrings);
 	}
 
+	/**
+	 * The accept-language-header entries sorted by q-value
+	 * 
+	 * @return
+	 * @throws HandlerException
+	 */
 	public AcceptLanguagesIterator getAcceptLanguages() throws HandlerException {
 		String[] acceptStrings = getHeaderValues(HeaderName.ACCEPT_LANGUAGE);
 

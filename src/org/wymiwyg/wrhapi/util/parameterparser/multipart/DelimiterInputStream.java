@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.wymiwyg.wrhapi.util.bodyparser;
+package org.wymiwyg.wrhapi.util.parameterparser.multipart;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,19 +23,29 @@ import java.io.PushbackInputStream;
 
 /**
  * @author reto
- *
+ * 
  */
 public class DelimiterInputStream extends PushbackInputStream {
 
 	static int MAX_DELIMITER_SIZE = 300;
+
 	/**
 	 * @param in
 	 */
 	public DelimiterInputStream(InputStream in) {
 		super(in, MAX_DELIMITER_SIZE);
 	}
-	
-	public byte[] readTill(byte[] delimiter) throws IOException, DelimiterNotFoundException {
+
+	/**
+	 * reads till delimiter is found
+	 * 
+	 * @param delimiter
+	 * @return the bytes read till the beginning of delimiter
+	 * @throws IOException
+	 * @throws DelimiterNotFoundException
+	 */
+	public byte[] readTill(byte[] delimiter) throws IOException,
+			DelimiterNotFoundException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int posInDelimiter = 0;
 		while (true) {
@@ -51,7 +61,7 @@ public class DelimiterInputStream extends PushbackInputStream {
 			} else {
 				if (posInDelimiter > 0) {
 					unread(ch);
-					unread(delimiter, 1, posInDelimiter-1);
+					unread(delimiter, 1, posInDelimiter - 1);
 					posInDelimiter = 0;
 					ch = delimiter[0];
 				}
