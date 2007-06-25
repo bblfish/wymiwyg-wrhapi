@@ -18,6 +18,19 @@
 		<mkdir dir="build/classes" />
 	</target>
 
+	<target name="javadoc" description="Generate Javadoc">
+		<delete dir="build/javadoc" quiet="true" />
+		<mkdir dir="build/javadoc" />
+		<javadoc sourcepath="src/" destdir="build/javadoc" 
+		maxmemory="200m" author="true" version="true" 
+			windowtitle="WRHAPI" 
+			doctitle="Web Request Handler API" 
+			bottom="Copyright &#169; 2007 WYMIWYG . No Rights Reserved." 
+			packagenames="org.wymiwyg.wrhapi.*" 
+			excludepackagenames="org.wymiwyg.wrhapi.test, org.wymiwyg.wrhapi.impl, org.wymiwyg.wrhapi.filter.impl, org.wymiwyg.wrhapi.filter.impl.test"
+			additionalparam="-breakiterator" Use="true" />
+	</target>
+	
 	<target name="compile" depends="prepare" description="compile classes and copy files">
 		<javac srcdir="src" destdir="build/classes" debug="on" optimize="on" deprecation="on" target="1.5" source="1.5">
 			<classpath refid="project.class.path" />
