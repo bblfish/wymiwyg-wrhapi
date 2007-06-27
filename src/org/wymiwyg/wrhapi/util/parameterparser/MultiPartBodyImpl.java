@@ -234,6 +234,7 @@ public class MultiPartBodyImpl extends AbstractParameterCollection implements
 	 */
 	public MultiPartBodyImpl(final InputStream rawIn, final String boundary)
 			throws HandlerException {
+		rawCollection = new ArrayList<KeyValuePair<ParameterValue>>();
 		DelimiterInputStream in = new DelimiterInputStream(rawIn);
 		try {
 			ByteArrayOutputStream delimiterBaos = new ByteArrayOutputStream();
@@ -259,6 +260,18 @@ public class MultiPartBodyImpl extends AbstractParameterCollection implements
 	}
 
 	/**
+	 * Creates a MultiPartBody from the InputStream of the body and the MimeType
+	 * 
+	 * @param rawIn
+	 * @param type
+	 * @throws HandlerException
+	 */
+	public MultiPartBodyImpl(final InputStream rawIn, final MimeType type)
+			throws HandlerException {
+		this(rawIn, getBoundary(type));
+	}
+
+	/**
 	 * @param messageBody
 	 * @param boundary
 	 * @throws HandlerException
@@ -280,11 +293,6 @@ public class MultiPartBodyImpl extends AbstractParameterCollection implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getFileParameterNames()
-	 */
 	public String[] getFileParameterNames() {
 		String[] result = new String[formFiles.size()];
 		int i = 0;
@@ -332,11 +340,6 @@ public class MultiPartBodyImpl extends AbstractParameterCollection implements
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.wymiwyg.wrhapi.util.bodyparser.MultiPartBody#getTextParameterValues(java.lang.String)
-	 */
 	public String[] getTextParameterValues(String name) {
 		List<String> values = new ArrayList<String>();
 		for (KeyValuePair<String> keyValue : formTexts) {

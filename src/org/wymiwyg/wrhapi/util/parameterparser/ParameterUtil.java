@@ -79,6 +79,8 @@ public class ParameterUtil {
 					.getHeaderValues(HeaderName.CONTENT_TYPE)[0]);
 		} catch (MimeTypeParseException e) {
 			type = null;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			type = null;
 		}
 		if (type != null) {
 			String boundary = type.getParameter("boundary");
