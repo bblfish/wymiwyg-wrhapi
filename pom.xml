@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.wymiwyg</groupId>
+	<artifactId>wrhapi</artifactId>
+	<version>0.2.0</version>
+	<dependencies>
+		<dependency>
+			<groupId>org.wymiwyg</groupId>
+			<artifactId>wymiwyg-commons-core</artifactId>
+			<version>0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<windowtitle>
+						Web Request Handler API (WRHAPI)
+					</windowtitle>
+					<excludePackageNames>
+						org.wymiwyg.wrhapi.test,org.wymiwyg.wrhapi.impl,org.wymiwyg.wrhapi.filter.impl,org.wymiwyg.wrhapi.filter.impl.test
+					</excludePackageNames>
+					<bottom>
+						Copyright &#169; 2007 WYMIWYG . No Rights
+						Reserved.
+					</bottom>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	<distributionManagement>
+		<repository>
+			<id>berlios-wymiwyg-repository</id>
+			<name>wymiwyg repository on berlios svn</name>
+			<url>
+				scp://shell.berlios.de/home/groups/wymiwyg/htdocs/maven2
+			</url>
+		</repository>
+	</distributionManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
