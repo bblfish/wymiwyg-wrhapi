@@ -27,6 +27,23 @@ import java.io.UnsupportedEncodingException;
  * 
  */
 public abstract class WebServerFactory {
+
+	
+
+	/**
+	 * Starts a new webserver with the default handler.
+	 * 
+	 * Implementation may have different ways to locate the default Handler,
+	 * such as injectjon using OSGI Declarative Service
+	 * 
+	 * @param serverBinding
+	 *            the serverbinding to which the server is connected
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract WebServer startNewWebServer(
+			ServerBinding serverBinding) throws IOException;
+
 	/**
 	 * Starts a new webserver
 	 * 
@@ -49,9 +66,8 @@ public abstract class WebServerFactory {
 	 */
 	public static WebServerFactory newInstance() {
 		// not using getSystemResources as we use only one provider anymway
-		InputStream providerList = ClassLoader
-				.getSystemResourceAsStream("META-INF/services/"
-						+ WebServerFactory.class.getName());
+		InputStream providerList = ClassLoader.getSystemResourceAsStream(
+				"META-INF/services/" + WebServerFactory.class.getName());
 
 		if (providerList == null) {
 			throw new RuntimeException("Unable to find provider");
@@ -67,8 +83,8 @@ public abstract class WebServerFactory {
 		}
 
 		try {
-			for (String s = bufferedReader.readLine(); s != null; s = bufferedReader
-					.readLine()) {
+			for (String s = bufferedReader.readLine(); s != null; s =
+							bufferedReader.readLine()) {
 				int poundPos = s.indexOf('#');
 
 				if (poundPos > -1) {

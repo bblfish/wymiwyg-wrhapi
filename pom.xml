@@ -8,8 +8,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wymiwyg</groupId>
 	<artifactId>wrhapi</artifactId>
-	<version>0.2.1</version>
+	<version>0.2.2</version>
 	<packaging>bundle</packaging>
+	<name>WRHAPI</name>
 	<build>
 		<plugins>
 			<plugin>
@@ -33,22 +34,30 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>1.2.1</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>
-							org.wymiwyg.wrhapi,org.wymiwyg.wrhapi.filter,org.wymiwyg.wrhapi.util,org.wymiwyg.wrhapi.util.parameterparser
-						</Export-Package>
-						<Private-Package>
-							org.wymiwyg.wrhapi.util.parameterparser.multipart,*
-						</Private-Package>
+						<Export-Package>org.wymiwyg.wrhapi,org.wymiwyg.wrhapi.filter,org.wymiwyg.wrhapi.util,org.wymiwyg.wrhapi.util.parameterparser</Export-Package>
+						<Private-Package>org.wymiwyg.wrhapi.util.parameterparser.multipart, org.wymiwyg.commons.mediatypes, org.apache.commons.logging, org.apache.commons.logging.impl, org.wymiwyg.wrhapi.filter.impl</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>
-
+			<!-- <plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-scr-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-scr-scrdescriptor</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>scr</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin> -->
 		</plugins>
 	</build>
+	<description>Web Request Handler API</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.wymiwyg</groupId>
@@ -72,15 +81,9 @@
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
-					<windowtitle>
-						Web Request Handler API (WRHAPI)
-					</windowtitle>
-					<excludePackageNames>
-						org.wymiwyg.wrhapi.test,org.wymiwyg.wrhapi.impl,org.wymiwyg.wrhapi.filter.impl,org.wymiwyg.wrhapi.filter.impl.test
-					</excludePackageNames>
-					<bottom>
-						Copyright © 2007 WYMIWYG . No Rights Reserved.
-					</bottom>
+					<windowtitle>Web Request Handler API (WRHAPI)</windowtitle>
+					<excludePackageNames>org.wymiwyg.wrhapi.test,org.wymiwyg.wrhapi.impl,org.wymiwyg.wrhapi.filter.impl,org.wymiwyg.wrhapi.filter.impl.test</excludePackageNames>
+					<bottom>Copyright © 2007 WYMIWYG . No Rights Reserved.</bottom>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -89,9 +92,7 @@
 		<repository>
 			<id>berlios-wymiwyg-repository</id>
 			<name>wymiwyg repository on berlios svn</name>
-			<url>
-				scp://shell.berlios.de/home/groups/wymiwyg/htdocs/maven2
-			</url>
+			<url>scp://shell.berlios.de/home/groups/wymiwyg/htdocs/maven2</url>
 		</repository>
 	</distributionManagement>
 </project>

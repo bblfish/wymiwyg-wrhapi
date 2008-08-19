@@ -23,37 +23,9 @@ package org.wymiwyg.wrhapi;
  */
 public interface RequestURI {
 
-	/**
-	 * @see org.wymiwyg.wrhapi.RequestURI.getType()
-	 */
-	public enum Type {
-		/**
-		 * From RFC 2616 <quote>The asterisk "*" means that the request does not
-		 * apply to a particular resource, but to the server itself, and is only
-		 * allowed when the method used does not necessarily apply to a
-		 * resource.</quote>
-		 */
-		NO_RESOURCE,
-		/**
-		 * From RFC 2616 <quote>The absoluteURI form is REQUIRED when the
-		 * request is being made to a proxy.</quote> <quote>To allow for
-		 * transition to absoluteURIs in all requests in future versions of
-		 * HTTP, all HTTP/1.1 servers MUST accept the absoluteURI form in
-		 * requests, even though HTTP/1.1 clients will only generate them in
-		 * requests to proxies.</quote>
-		 */
-		ABSOLUTE_URI,
-		/**
-		 * A type of request-URI containing only the abs-path section of the
-		 * http URL
-		 */
-		ABS_PATH,
-		/**
-		 * Used by the HTTP CONNECT method
-		 */
-		AUTHORITY
-	}
+	
 
+	
 	/**
 	 * Section 5.1.2 of RFC 2616 defines 4 options for Request-URIs
 	 * 
@@ -96,4 +68,35 @@ public interface RequestURI {
 	 */
 	@Deprecated
 	public String[] getParameterValues(String name);
+	
+	/**
+	 * @see org.wymiwyg.wrhapi.RequestURI.getType()
+	 */
+	public enum Type {
+		/**
+		 * From RFC 2616 <quote>The asterisk "*" means that the request does not
+		 * apply to a particular resource, but to the server itself, and is only
+		 * allowed when the method used does not necessarily apply to a
+		 * resource.</quote>
+		 */
+		NO_RESOURCE,
+		/**
+		 * From RFC 2616 <quote>The absoluteURI form is REQUIRED when the
+		 * request is being made to a proxy.</quote> <quote>To allow for
+		 * transition to absoluteURIs in all requests in future versions of
+		 * HTTP, all HTTP/1.1 servers MUST accept the absoluteURI form in
+		 * requests, even though HTTP/1.1 clients will only generate them in
+		 * requests to proxies.</quote>
+		 */
+		ABSOLUTE_URI,
+		/**
+		 * A type of request-URI containing only the abs-path section of the
+		 * http URL
+		 */
+		ABS_PATH,
+		/**
+		 * Used by the HTTP CONNECT method
+		 */
+		AUTHORITY
+	}
 }

@@ -169,10 +169,11 @@ public class HeaderName {
         }
     }
 
-    @Override
-    /**
+    
+	/**
      * @return the hashcode of the lower-case string of the header name
-     */ 
+     */
+	@Override
     public int hashCode() {
         return lowerCaseName.hashCode();
     }
