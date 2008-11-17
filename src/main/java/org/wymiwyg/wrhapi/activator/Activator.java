@@ -32,9 +32,8 @@ import org.wymiwyg.wrhapi.WebServerFactory;
  * 
  * @author reto
  * @scr.component immediate="true"
- * @service.vendor trialox
  * @service.description start the web server
- * @scr.property name="port" field="port" value="8282" method="setPort"
+ * @scr.property name="port" value="8282"
  * 
  */
 public class Activator {
@@ -59,12 +58,19 @@ public class Activator {
 
 	protected void activate(ComponentContext context) throws Exception {
 
-		final ComponentContext ctx = context;
+		//final ComponentContext ctx = context;
 
 		System.out.println("Activating WRHAPI");
+		try {
+			String portStr =
+					(String) context.getProperties().get("port");
+			port = Integer.parseInt(portStr);
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
 		if (webServer == null) {
 			try {
-				System.out.println("binding webserver factory");
+				System.out.println("Starting webserver at port "+port);
 				webServer = webServerFactory.startNewWebServer(
 						new ServerBinding() {
 
@@ -75,16 +81,6 @@ public class Activator {
 
 							@Override
 							public int getPort() {
-								int port = 8282;
-
-								try {
-									String portStr =
-											(String) ctx.getProperties().get("port");
-									port = Integer.parseInt(portStr);
-								} catch (Exception e) {
-									System.out.println(e.toString());
-								}
-
 								return port;
 							}
 						});
@@ -97,6 +93,6 @@ public class Activator {
 
 	public void deactivate(ComponentContext context) throws Exception {
 		webServer.stop();
-
+		webServer = null;
 	}
 }
