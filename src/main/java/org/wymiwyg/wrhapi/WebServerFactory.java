@@ -30,19 +30,7 @@ public abstract class WebServerFactory {
 
 	
 
-	/**
-	 * Starts a new webserver with the default handler.
-	 * 
-	 * Implementation may have different ways to locate the default Handler,
-	 * such as injectjon using OSGI Declarative Service
-	 * 
-	 * @param serverBinding
-	 *            the serverbinding to which the server is connected
-	 * @return
-	 * @throws IOException
-	 */
-	public abstract WebServer startNewWebServer(
-			ServerBinding serverBinding) throws IOException;
+
 
 	/**
 	 * Starts a new webserver

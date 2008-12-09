@@ -37,8 +37,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>org.wymiwyg.wrhapi,org.wymiwyg.wrhapi.activator,org.wymiwyg.wrhapi.filter,org.wymiwyg.wrhapi.util,org.wymiwyg.wrhapi.util.parameterparser</Export-Package>
-						<Private-Package>org.wymiwyg.wrhapi.util.parameterparser.multipart, org.wymiwyg.commons.mediatypes, org.apache.commons.logging, org.apache.commons.logging.impl, org.wymiwyg.wrhapi.filter.impl</Private-Package>
+						<Export-Package>org.wymiwyg.wrhapi.*</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -79,6 +78,11 @@
             <groupId>org.osgi</groupId>
             <artifactId>osgi_R4_compendium</artifactId>
             <version>1.0</version>
+        </dependency>
+		<dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.5</version>
         </dependency>
 	</dependencies>
 	<reporting>
