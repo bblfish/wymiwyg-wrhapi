@@ -53,10 +53,8 @@ public class PathMappingHandler implements Handler {
 			throw new IllegalArgumentException("handler may not be null");
 		}
 		String uniquePath;
-		boolean trailingSlash = false;
 		if (path.charAt(path.length()-1) == '/') {
 			uniquePath = path + uid + '/';
-			trailingSlash = true;
 		} else {
 			uniquePath = path + '/' + uid;
 		}

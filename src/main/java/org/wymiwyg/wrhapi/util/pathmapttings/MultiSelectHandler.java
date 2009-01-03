@@ -41,7 +41,7 @@ class MultiSelectHandler implements Handler {
 
 	public void handle(Request request, Response response) throws HandlerException {
 		
-		final String absPath = request.getRequestURI().getAbsPath();
+		final String absPath = request.getRequestURI().getAbsPath().substring(1);
 		
 		response.setBody(new MessageBody2Write() {
 
@@ -51,8 +51,7 @@ class MultiSelectHandler implements Handler {
 				writer.println("<body>");
 				writer.println("<h1>Multiple handlers configured for this path</h1>");
 				for (String option : options) {
-					writer.print(option);
-					writer.println(absPath);
+					writer.println("<a href="+option+absPath+">"+option+absPath+"</a>");
 					writer.println("<br />");
 				}
 				writer.println("</body>");
