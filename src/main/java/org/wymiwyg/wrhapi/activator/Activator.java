@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -41,6 +43,8 @@ import org.wymiwyg.wrhapi.ServerBinding;
 import org.wymiwyg.wrhapi.WebServer;
 import org.wymiwyg.wrhapi.WebServerFactory;
 import org.osgi.service.cm.ConfigurationAdmin;
+import org.wymiwyg.wrhapi.filter.Filter;
+import org.wymiwyg.wrhapi.filter.impl.FilterRunner;
 import org.wymiwyg.wrhapi.util.pathmapttings.PathMappingHandler;
 
 /**
@@ -53,6 +57,8 @@ import org.wymiwyg.wrhapi.util.pathmapttings.PathMappingHandler;
  * @service.description start the web server
  * @scr.reference name="handler" interface="org.wymiwyg.wrhapi.Handler"
  *				  cardinality="1..n" target="(!(org.wymiwyg.wrhapi.nobind=true))"
+ * @scr.reference name="filter" interface="org.wymiwyg.wrhapi.filter.Filter"
+ *				  cardinality="0..n"
  * @scr.property name="port" value="8282"
  * @scr.property name="mappings"
  *               values.name=""
@@ -67,6 +73,7 @@ public class Activator {
 	 */
 	private ConfigurationAdmin configurationAdmin;
 	private Map<String, Handler> nameServiceMap = new HashMap<String, Handler>();
+	private List<Filter> filters = new ArrayList<Filter>();
 	/**
 	 * @scr.reference
 	 */
@@ -102,6 +109,14 @@ public class Activator {
 		nameServiceMap.remove(name);
 	}
 
+	protected void bindFilter(Filter filter) {
+		filters.add(filter);
+	}
+
+	protected void unbindFilter(Filter filter) {
+		filters.remove(filter);
+	}
+
 	protected void activate(ComponentContext context) throws Exception {
 
 
@@ -123,9 +138,15 @@ public class Activator {
 					parameterizedPath.getPath(), pid, parameterizedPath.
 					removePrefix(), parameterizedPath.isOverlay());
 		}
+		Handler handler = mappingHandler;
+		if (filters.size() > 0) {
+			log.info("Activating WRHAPI with "+filters.size()+" filters");
+			handler = new FilterRunner(
+					filters.toArray(new Filter[filters.size()]), handler);
+		}
 		try {
 			log.info("Starting webserver at port " + port);
-			webServer = webServerFactory.startNewWebServer(mappingHandler,
+			webServer = webServerFactory.startNewWebServer(handler,
 					new ServerBinding() {
 
 						@Override
