@@ -45,7 +45,7 @@ import org.wymiwyg.wrhapi.WebServerFactory;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.wymiwyg.wrhapi.filter.Filter;
 import org.wymiwyg.wrhapi.filter.impl.FilterRunner;
-import org.wymiwyg.wrhapi.util.pathmapttings.PathMappingHandler;
+import org.wymiwyg.wrhapi.util.pathmappings.PathMappingHandler;
 
 /**
  * This is intended to run in an an OSGi-DS environment.

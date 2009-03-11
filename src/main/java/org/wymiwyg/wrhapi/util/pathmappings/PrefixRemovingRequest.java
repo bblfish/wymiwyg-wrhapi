@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.wymiwyg.wrhapi.util.pathmapttings;
+package org.wymiwyg.wrhapi.util.pathmappings;
 
 import org.wymiwyg.wrhapi.HandlerException;
 import org.wymiwyg.wrhapi.Request;

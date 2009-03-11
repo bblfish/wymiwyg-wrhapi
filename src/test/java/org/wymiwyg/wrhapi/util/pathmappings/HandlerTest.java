@@ -18,10 +18,6 @@ package org.wymiwyg.wrhapi.util.pathmappings;
 
 import java.net.InetAddress;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.wymiwyg.wrhapi.Handler;
 import org.wymiwyg.wrhapi.HandlerException;
@@ -32,8 +28,7 @@ import org.wymiwyg.wrhapi.Request;
 import org.wymiwyg.wrhapi.RequestURI;
 import org.wymiwyg.wrhapi.Response;
 import org.wymiwyg.wrhapi.URIScheme;
-import org.wymiwyg.wrhapi.util.RequestWrapper;
-import org.wymiwyg.wrhapi.util.pathmapttings.PathMappingHandler;
+import org.wymiwyg.wrhapi.util.pathmappings.PathMappingHandler;
 import static org.junit.Assert.*;
 
 /**
@@ -55,14 +50,14 @@ public class HandlerTest {
 					throws HandlerException {
 				calls[0]++;
 			}
-		}, "/", "handler1", false);
+		}, "/", "handler1", false, false);
 		assertEquals(0, calls[0]);
 		handler.handle(getRequestForPath("/"), null);
 		assertEquals(1, calls[0]);
 		handler.handle(getRequestForPath("/foo"), null);
 		assertEquals(2, calls[0]);
 	}
-	
+
 	private Request getRequestForPath(final String path) {
 		return new Request() {
 
@@ -74,15 +69,18 @@ public class HandlerTest {
 				return new RequestURI() {
 
 					public Type getType() {
-						throw new UnsupportedOperationException("Not supported yet.");
+						throw new UnsupportedOperationException(
+								"Not supported yet.");
 					}
 
 					public String getAbsPath() {
-						throw new UnsupportedOperationException("Not supported yet.");
+						throw new UnsupportedOperationException(
+								"Not supported yet.");
 					}
 
 					public String getQuery() {
-						throw new UnsupportedOperationException("Not supported yet.");
+						throw new UnsupportedOperationException(
+								"Not supported yet.");
 					}
 
 					public String getPath() {
@@ -90,11 +88,13 @@ public class HandlerTest {
 					}
 
 					public String[] getParameterNames() {
-						throw new UnsupportedOperationException("Not supported yet.");
+						throw new UnsupportedOperationException(
+								"Not supported yet.");
 					}
 
 					public String[] getParameterValues(String name) {
-						throw new UnsupportedOperationException("Not supported yet.");
+						throw new UnsupportedOperationException(
+								"Not supported yet.");
 					}
 				};
 			}

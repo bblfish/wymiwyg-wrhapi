@@ -15,7 +15,7 @@
  *
  */
 
-package org.wymiwyg.wrhapi.util.pathmapttings;
+package org.wymiwyg.wrhapi.util.pathmappings;
 
 import java.io.IOException;
 import java.io.PrintWriter;
