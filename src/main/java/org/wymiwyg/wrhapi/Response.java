@@ -18,11 +18,20 @@ package org.wymiwyg.wrhapi;
 
 
 /**
+ * Represents a response to an HTTP request. An instance of this class
+ * is passed to <code>Handler.handle</code>.
+ *
+ * Note that the values set to the Response object are <em>not</em> forwarded
+ * to the HTTP client before the handle method returns. If a non-empty body has
+ * been set Headers and Status are only set when the first byte has been received
+ * from the <code>MessageBody</code> object.
+ *
  * @author reto
  */
 public interface Response {
 	
-    /** sets the body of the response
+    /** 
+	 * Sets the body of the response.
      * 
      * @param body the body to be set
      * @throws HandlerException
