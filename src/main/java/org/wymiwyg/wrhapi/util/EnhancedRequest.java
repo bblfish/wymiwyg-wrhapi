@@ -161,7 +161,7 @@ public class EnhancedRequest extends RequestWrapper {
 		if (scheme == URIScheme.HTTPSY) {
 			return 80;
 		}
-		throw new RuntimeException("unsupprted scheme");
+		throw new RuntimeException("unsupported scheme");
 	}
 
 	/**

@@ -21,18 +21,13 @@ import java.net.InetAddress;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
@@ -72,7 +67,8 @@ public class Activator {
 	 * @scr.reference
 	 */
 	private ConfigurationAdmin configurationAdmin;
-	private Map<String, Handler> nameServiceMap = new HashMap<String, Handler>();
+	private Map<String, Handler> nameServiceMap;
+	private Set<ServiceReference> handlerRefs = new HashSet<ServiceReference>();
 	private List<Filter> filters = new ArrayList<Filter>();
 	/**
 	 * @scr.reference
@@ -90,12 +86,13 @@ public class Activator {
 	}
 
 	protected void bindHandler(ServiceReference handlerRef) {
+		handlerRefs.add(handlerRef);
+	}
+	private void resolveHandler(ServiceReference handlerRef, ComponentContext context) {
 		log.info("binding: " + handlerRef);
 		//String noBind = (String) handlerRef.getProperty(
-		final BundleContext bundleContext = handlerRef.getBundle().
-				getBundleContext();
 		String name = (String) handlerRef.getProperty("service.pid");
-		Handler handler = (Handler) bundleContext.getService(handlerRef);
+		Handler handler = (Handler) context.locateService("handler",handlerRef);
 		if (handler == null) {
 			log.error("Could not get service for " + name);
 		} else {
@@ -105,8 +102,7 @@ public class Activator {
 	}
 
 	protected void unbindHandler(ServiceReference handlerRef) {
-		String name = (String) handlerRef.getProperty("service.pid");
-		nameServiceMap.remove(name);
+		handlerRefs.add(handlerRef);
 	}
 
 	protected void bindFilter(Filter filter) {
@@ -118,9 +114,11 @@ public class Activator {
 	}
 
 	protected void activate(ComponentContext context) throws Exception {
-
-
 		log.info("Activating WRHAPI (" + configurationAdmin + ")");
+		nameServiceMap = new HashMap<String, Handler>();
+		for (ServiceReference ref : handlerRefs) resolveHandler(ref, context);
+
+		
 		try {
 			String portStr =
 					(String) context.getProperties().get("port");
