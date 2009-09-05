@@ -10,7 +10,7 @@ public class KeyValuePair<T> {
 	String key;
 	T value;
 
-	KeyValuePair(String key, T value) {
+	public KeyValuePair(String key, T value) {
 		super();
 		this.key = key;
 		this.value = value;

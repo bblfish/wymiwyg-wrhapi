@@ -16,8 +16,7 @@
  */
 package org.wymiwyg.wrhapi.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -28,7 +27,7 @@ import java.util.TreeSet;
  * @author reto
  */
 public class AcceptLanguagesIterator implements Iterator<AcceptLanguageHeaderEntry> {
-    Log log = LogFactory.getLog(AcceptLanguagesIterator.class);
+
     private Iterator<AcceptLanguageHeaderEntry> iterator;
 
     /**

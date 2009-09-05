@@ -63,18 +63,13 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @author reto
  */
 public class AcceptHeaderIterator implements Iterator<AcceptHeaderEntry> {
 	
-	Log log = LogFactory.getLog(AcceptHeaderIterator.class);
 	private Iterator<AcceptHeaderEntry> iterator;
-	
-	
 	
 	/**
 	 * 
@@ -87,7 +82,7 @@ public class AcceptHeaderIterator implements Iterator<AcceptHeaderEntry> {
 				AcceptHeaderEntry currentHeader = new AcceptHeaderEntry(currentstring);
 				acceptHeaderSet.add(currentHeader);
 			} catch (InvalidPatternException e) {
-				log.error(e.toString());
+				throw new RuntimeException(e);
 			}
 		}
 		iterator = acceptHeaderSet.iterator();

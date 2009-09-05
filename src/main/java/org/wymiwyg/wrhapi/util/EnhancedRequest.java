@@ -23,8 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.wymiwyg.wrhapi.HandlerException;
 import org.wymiwyg.wrhapi.HeaderName;
 import org.wymiwyg.wrhapi.Request;
@@ -38,7 +37,6 @@ import org.wymiwyg.wrhapi.URIScheme;
  * @author reto
  */
 public class EnhancedRequest extends RequestWrapper {
-	private static final Log log = LogFactory.getLog(EnhancedRequest.class);
 
 	private String host;
 
@@ -180,7 +178,7 @@ public class EnhancedRequest extends RequestWrapper {
 				try {
 					resultCollection.add(new Cookie(tokens.nextToken()));
 				} catch (InvalidCookieException e) {
-					log.warn("Invalid cookie: " + e.toString());
+					throw new HandlerException(e);
 				}
 			}
 		}

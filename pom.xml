@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wymiwyg</groupId>
 	<artifactId>wrhapi</artifactId>
-	<version>0.7</version>
+	<version>0.8-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>WRHAPI</name>
 	<build>
@@ -58,10 +58,10 @@
 	</build>
 	<description>Web Request Handler API</description>
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.wymiwyg</groupId>
 			<artifactId>wymiwyg-commons-core</artifactId>
-		</dependency>	
+		</dependency>	-->
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>osgi_R4_core</artifactId>

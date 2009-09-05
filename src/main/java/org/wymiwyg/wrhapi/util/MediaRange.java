@@ -60,14 +60,12 @@ import java.util.StringTokenizer;
 
 import javax.activation.MimeType;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @author reto
  */
 public class MediaRange implements Comparable<MediaRange> {
-	private static Log logger = LogFactory.getLog(MediaRange.class);
+
 	private String type, subtype;
 	// accessed by AccedHeaderEntry
 	Map<String, String> parameters = new HashMap<String, String>();
@@ -145,9 +143,6 @@ public class MediaRange implements Comparable<MediaRange> {
 	 */
 	private boolean match(String pattern, String string) {
 		boolean result = pattern.equals("*") || pattern.equals(string);
-		if (logger.isDebugEnabled()) {
-			logger.debug(string + " matches " + pattern + "?" + result);
-		}
 		return result;
 	}
 

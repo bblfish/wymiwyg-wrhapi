@@ -56,7 +56,7 @@ import org.wymiwyg.wrhapi.util.pathmappings.PathMappingHandler;
  *				  cardinality="0..n"
  * @scr.property name="port" value="8282"
  * @scr.property name="mappings"
- *               values.name=""
+ *               values.name="[placeholder]"
  * 
  */
 public class Activator {
@@ -180,6 +180,9 @@ public class Activator {
 		Set<String> knownServiceNames = new HashSet<String>(nameServiceMap.
 				keySet());
 		for (String mapping : mappings) {
+			if ("[placeholder]".equals(mapping)) {
+				continue;
+			}
 			int firstEqualsPos = mapping.indexOf('=');
 			if (firstEqualsPos == -1) {
 				log.warn("invalid mapping " + mapping);
