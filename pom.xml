@@ -3,12 +3,12 @@
 	<parent>
 		<artifactId>wymiwyg</artifactId>
 		<groupId>org.wymiwyg</groupId>
-		<version>0.9.1</version>
+		<version>0.9.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wymiwyg</groupId>
 	<artifactId>wrhapi</artifactId>
-	<version>0.8</version>
+	<version>0.8.1</version>
 	<packaging>bundle</packaging>
 	<name>WRHAPI</name>
 	<build>
@@ -98,11 +98,9 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<distributionManagement>
-		<repository>
-			<id>berlios-wymiwyg-repository</id>
-			<name>wymiwyg repository on berlios svn</name>
-			<url>scp://shell.berlios.de/home/groups/wymiwyg/htdocs/maven2</url>
-		</repository>
-	</distributionManagement>
+	<scm>
+		<developerConnection>scm:svn:https://svn.berlios.de/svnroot/repos/wrhapi/</developerConnection>
+		<connection>scm:svn:http://svn.berlios.de/svnroot/repos/wrhapi/</connection>
+		<url>http://svn.berlios.de/svnroot/repos/wrhapi/</url>
+	</scm>
 </project>
