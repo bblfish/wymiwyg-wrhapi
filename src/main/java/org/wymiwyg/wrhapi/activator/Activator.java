@@ -78,7 +78,7 @@ public class Activator {
 	private int port = 8282;
 
 	public Activator() {
-		log.info("constructing activator");
+		log.debug("constructing activator");
 	}
 
 	public void setPort(int port) throws Exception {
@@ -89,7 +89,7 @@ public class Activator {
 		handlerRefs.add(handlerRef);
 	}
 	private void resolveHandler(ServiceReference handlerRef, ComponentContext context) {
-		log.info("binding: " + handlerRef);
+		log.debug("binding: {} ", handlerRef);
 		//String noBind = (String) handlerRef.getProperty(
 		String name = (String) handlerRef.getProperty("service.pid");
 		Handler handler = (Handler) context.locateService("handler",handlerRef);
@@ -114,7 +114,7 @@ public class Activator {
 	}
 
 	protected void activate(ComponentContext context) throws Exception {
-		log.info("Activating WRHAPI (" + configurationAdmin + ")");
+		log.debug("Activating WRHAPI ( {} )", configurationAdmin);
 		nameServiceMap = new HashMap<String, Handler>();
 		for (ServiceReference ref : handlerRefs) resolveHandler(ref, context);
 
@@ -138,12 +138,12 @@ public class Activator {
 		}
 		Handler handler = mappingHandler;
 		if (filters.size() > 0) {
-			log.info("Activating WRHAPI with "+filters.size()+" filters");
+			log.debug("Activating WRHAPI with {} filters", filters.size());
 			handler = new FilterRunner(
 					filters.toArray(new Filter[filters.size()]), handler);
 		}
 		try {
-			log.info("Starting webserver at port " + port);
+			log.debug("Starting webserver at port {}", port);
 			webServer = webServerFactory.startNewWebServer(handler,
 					new ServerBinding() {
 

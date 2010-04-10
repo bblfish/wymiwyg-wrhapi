@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wymiwyg</groupId>
 	<artifactId>wrhapi</artifactId>
-	<version>0.8.1</version>
+	<version>0.8.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>WRHAPI</name>
 	<url>http://wrahpi.wymiwyg.org/</url>
@@ -46,7 +46,7 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-scr-plugin</artifactId>
-				<version>1.4.0</version>
+				<version>1.4.2</version>
 				<executions>
 					<execution>
 						<id>generate-scr-scrdescriptor</id>
@@ -84,7 +84,7 @@
 		<dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.5</version>
+            <version>1.5.8</version>
         </dependency>
 	</dependencies>
 	<reporting>
