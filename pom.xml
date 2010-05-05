@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wymiwyg</groupId>
 	<artifactId>wrhapi</artifactId>
-	<version>0.8.2-SNAPSHOT</version>
+	<version>0.8.2</version>
 	<packaging>bundle</packaging>
 	<name>WRHAPI</name>
 	<url>http://wrahpi.wymiwyg.org/</url>
