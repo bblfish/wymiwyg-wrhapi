@@ -52,8 +52,9 @@ import org.wymiwyg.wrhapi.util.pathmappings.PathMappingHandler;
  * @service.description start the web server
  * @scr.reference name="handler" interface="org.wymiwyg.wrhapi.Handler"
  *				  cardinality="1..n" target="(!(org.wymiwyg.wrhapi.nobind=true))"
+ *                policy="dynamic"
  * @scr.reference name="filter" interface="org.wymiwyg.wrhapi.filter.Filter"
- *				  cardinality="0..n"
+ *				  cardinality="0..n" policy="dynamic"
  * @scr.property name="port" value="8282"
  * @scr.property name="mappings"
  *               values.name="[placeholder]"
@@ -70,6 +71,7 @@ public class Activator {
 	private Map<String, Handler> nameServiceMap;
 	private Set<ServiceReference> handlerRefs = new HashSet<ServiceReference>();
 	private List<Filter> filters = new ArrayList<Filter>();
+	private Map<String, ParameterizedPath> mappingMap;
 	/**
 	 * @scr.reference
 	 */
@@ -87,6 +89,10 @@ public class Activator {
 
 	protected void bindHandler(ServiceReference handlerRef) {
 		handlerRefs.add(handlerRef);
+		if (webServer != null) {
+			deactivate(null);
+			initialize();
+		}
 	}
 	private void resolveHandler(ServiceReference handlerRef, ComponentContext context) {
 		log.debug("binding: {} ", handlerRef);
@@ -107,6 +113,10 @@ public class Activator {
 
 	protected void bindFilter(Filter filter) {
 		filters.add(filter);
+		if (webServer != null) {
+			deactivate(null);
+			initialize();
+		}
 	}
 
 	protected void unbindFilter(Filter filter) {
@@ -126,45 +136,13 @@ public class Activator {
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
-		Map<String, ParameterizedPath> mappingMap = getMappings((String[]) context.getProperties().
+		mappingMap = getMappings((String[]) context.getProperties().
 				get("mappings"));
-		PathMappingHandler mappingHandler = new PathMappingHandler();
-		for (Map.Entry<String, Handler> entry : nameServiceMap.entrySet()) {
-			String pid = entry.getKey();
-			ParameterizedPath parameterizedPath = mappingMap.get(pid);
-			mappingHandler.addHandler(entry.getValue(),
-					parameterizedPath.getPath(), pid, parameterizedPath.
-					removePrefix(), parameterizedPath.isOverlay());
-		}
-		Handler handler = mappingHandler;
-		if (filters.size() > 0) {
-			log.debug("Activating WRHAPI with {} filters", filters.size());
-			handler = new FilterRunner(
-					filters.toArray(new Filter[filters.size()]), handler);
-		}
-		try {
-			log.debug("Starting webserver at port {}", port);
-			webServer = webServerFactory.startNewWebServer(handler,
-					new ServerBinding() {
-
-						@Override
-						public InetAddress getInetAddress() {
-							return null;
-						}
-
-						@Override
-						public int getPort() {
-							return port;
-						}
-					});
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
+		initialize();
 
 	}
 
-	public void deactivate(ComponentContext context) throws Exception {
+	public void deactivate(ComponentContext context) {
 		webServer.stop();
 		webServer = null;
 	}
@@ -215,6 +193,41 @@ public class Activator {
 			config.update(properties);
 		}
 		return result;
+	}
+
+	private void initialize() {
+		PathMappingHandler mappingHandler = new PathMappingHandler();
+		for (Map.Entry<String, Handler> entry : nameServiceMap.entrySet()) {
+			String pid = entry.getKey();
+			ParameterizedPath parameterizedPath = mappingMap.get(pid);
+			mappingHandler.addHandler(entry.getValue(),
+					parameterizedPath.getPath(), pid, parameterizedPath.
+					removePrefix(), parameterizedPath.isOverlay());
+		}
+		Handler handler = mappingHandler;
+		if (filters.size() > 0) {
+			log.debug("Activating WRHAPI with {} filters", filters.size());
+			handler = new FilterRunner(
+					filters.toArray(new Filter[filters.size()]), handler);
+		}
+		try {
+			log.debug("Starting webserver at port {}", port);
+			webServer = webServerFactory.startNewWebServer(handler,
+					new ServerBinding() {
+
+						@Override
+						public InetAddress getInetAddress() {
+							return null;
+						}
+
+						@Override
+						public int getPort() {
+							return port;
+						}
+					});
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
