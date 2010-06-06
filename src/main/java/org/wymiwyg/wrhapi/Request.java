@@ -17,6 +17,7 @@
 package org.wymiwyg.wrhapi;
 
 import java.net.InetAddress;
+import java.security.cert.X509Certificate;
 import java.util.Set;
 
 /**
@@ -91,4 +92,12 @@ public interface Request {
 	 * @throws HandlerException
 	 */
 	public InetAddress getRemoteHost() throws HandlerException;
+
+	/**
+	 * 
+	 * @return the <code>X509Certificate</code>s sent by the client, or null
+	 *   if no client certificate was sent
+	 */
+	public X509Certificate[] getCertificates();
+
 }

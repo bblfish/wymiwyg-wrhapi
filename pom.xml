@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wymiwyg</groupId>
 	<artifactId>wrhapi</artifactId>
-	<version>0.8.2</version>
+	<version>0.9-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>WRHAPI</name>
 	<url>http://wrahpi.wymiwyg.org/</url>
@@ -19,7 +19,8 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-				</configuration>
+					<encoding>utf-8</encoding>
+					</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>

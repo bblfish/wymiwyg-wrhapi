@@ -17,6 +17,7 @@
 package org.wymiwyg.wrhapi.util.pathmappings;
 
 import java.net.InetAddress;
+import java.security.cert.X509Certificate;
 import java.util.Set;
 import org.junit.Test;
 import org.wymiwyg.wrhapi.Handler;
@@ -124,6 +125,10 @@ public class HandlerTest {
 			}
 
 			public InetAddress getRemoteHost() throws HandlerException {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+			public X509Certificate[] getCertificates() {
 				throw new UnsupportedOperationException("Not supported yet.");
 			}
 		};

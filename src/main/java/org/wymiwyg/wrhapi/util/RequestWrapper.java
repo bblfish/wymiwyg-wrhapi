@@ -17,6 +17,7 @@
 package org.wymiwyg.wrhapi.util;
 
 import java.net.InetAddress;
+import java.security.cert.X509Certificate;
 import java.util.Set;
 
 import org.wymiwyg.wrhapi.HandlerException;
@@ -111,5 +112,9 @@ public class RequestWrapper implements Request {
 	 */
 	public MessageBody getMessageBody() throws HandlerException {
 		return wrapped.getMessageBody();
+	}
+
+	public X509Certificate[] getCertificates() {
+		return wrapped.getCertificates();
 	}
 }
