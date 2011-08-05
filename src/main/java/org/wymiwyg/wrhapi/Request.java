@@ -100,4 +100,9 @@ public interface Request {
 	 */
 	public X509Certificate[] getCertificates();
 
+	/**
+	 *
+	 * @return an attribute of the Request
+	 */
+	public Object getAttribute(String name);
 }

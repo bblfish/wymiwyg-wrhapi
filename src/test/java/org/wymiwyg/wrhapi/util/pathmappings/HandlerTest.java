@@ -131,6 +131,10 @@ public class HandlerTest {
 			public X509Certificate[] getCertificates() {
 				throw new UnsupportedOperationException("Not supported yet.");
 			}
+
+			public Object getAttribute(String name) {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
 		};
 	}
 }

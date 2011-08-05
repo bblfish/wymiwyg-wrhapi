@@ -117,4 +117,13 @@ public class RequestWrapper implements Request {
 	public X509Certificate[] getCertificates() {
 		return wrapped.getCertificates();
 	}
+
+	/**
+	 *
+	 * @return an attribute of the Request
+	 */
+	public Object getAttribute(String name) {
+		return wrapped.getAttribute(name);
+	}
+
 }
